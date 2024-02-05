@@ -7,13 +7,48 @@ environment:
   sdk: '>=3.2.1 <4.0.0'
 
 dependencies:
+  firebase_core: ^2.25.3
   flutter:
     sdk: flutter
+  go_router: ^13.1.0
+  google_sign_in: ^6.2.1
+  http: ^1.2.0
+  loading_overlay: ^0.3.0
+  path: ^1.8.3
+  path_provider: ^2.1.2
+
+  #old file
+  # fluttertoast: ^8.0.6
+  # location: ^4.4.0
+  latlong2: 
+  provider: 
+  connectivity: 
+  image_cropper:
+  string_similarity: ^2.0.0
+  image_picker:
+  flutter_gemini: ^2.0.1
+  either_dart: ^1.0.0
+  flutter_riverpod: ^2.4.10
+  riverpod_annotation: ^2.3.4
+  geolocator: ^10.1.0
+
+  # firebase_ml_vision: ^0.11.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  change_app_package_name: ^1.1.0
+  riverpod_generator: ^2.3.10
+  build_runner: ^2.4.8
+  custom_lint: ^0.5.11
+  riverpod_lint: ^2.3.8
+
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/no_image.jpg
+    - assets/background_pattern.jpg
+    - assets/background_pattern_pharma.jpg

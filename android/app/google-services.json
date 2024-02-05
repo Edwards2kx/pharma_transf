@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "452611067008",
+    "project_id": "pharma-transf",
+    "storage_bucket": "pharma-transf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452611067008:android:33556c64edd13662086a65",
+        "android_client_info": {
+          "package_name": "com.smartneighbor.pharmatransf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "452611067008-4ah134ohped37esafc675coluf2floi8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartneighbor.pharmatransf",
+            "certificate_hash": "18c5c19e5802cc7931a8816f81f0464320617b7c"
+          }
+        },
+        {
+          "client_id": "452611067008-g0gnguj16tbpc4rn6brnsnfaa96ijcue.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9AmoXC7B3BFmBR7IwI7fIn7-sfom8LF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "452611067008-g0gnguj16tbpc4rn6brnsnfaa96ijcue.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

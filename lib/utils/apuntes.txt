@@ -1,0 +1,149 @@
+modo de trabajo para incrementar efectividad
+
+pasar los bloques a una lista
+elemento que encuentre coincidencia, elemento que marco 
+como usado. copio a una lista de elementos usados y 
+al final saco una lista de elementos no usados.
+
+al final los elementos que tenga vacios, paso a comparar
+con cual se parece mas de los de la lista de no usados
+
+el que tenga el porcentaje alto pasa a ser escogido.
+para comparar se remueve todo espacio y simbolo 
+que no sea letra o numero
+
+
+funciones de tipo getProducts() que recorte la imagen y haga la consulta y todo, 
+regrese un bool si todo salio bien 
+
+si el ultimo valor de un producto no es un numero marcar un error en el nombre y poder editarlo
+por ejemplo confundir la G con 6
+
+
+primero recorto productos, sabiendo esto se como cortar en frac y en ent
+
+
+
+controlar botones de tomar foto y enviar datos (enables y colores);
+
+ser mas claros si se tomaron todos los datos... snackBar 
+
+
+primera vista con farmacias a que visitar
+
+
+caja drawbar
+farmacias
+productos
+historial
+
+
+
+segunda vista cuando ya llego a la farmacia
+con lista de productos que debe retirar 
+y productos que debe dejar
+
+
+
+cambio de estado en productos desde la vista 2
+recogido, entregado
+
+email de facebook  o con gmail
+nombre y farmacia donde laboro
+
+
+
+solo salen productos en farmacia cuando ya llega, y solo
+
+no permita el cambio de estado sino esta en el local
+
+
+quien recogio, la hora de y la pocision.
+
+//emailFarmaUser
+
+//farmaUserEmail   => este
+
+
+accion getFarmaUser
+
+para saber si esta lleno verifico que en los mail de susuario recoge y o entrega estan vacios
+
+para la otra vista en vez de las farmacias colocar quien recogio y quien entrego
+
+QUE PASA SI RECOGE ALGUNOS PRODUCTOS Y OTROS NO... SERA NECESARIO PLANTEAR PRODUCTOS INDIVIDUALES ?
+
+informacion actualiza a las fecha y hora para un pull to refresh 
+
+pantalla de entregados
+
+PANTALLA CON SOLO LA FARMACIA A LA QUE TIENE QUE IR CON HORARIO DE ATENCION AGREGAR TEXTO QUE DIGA PENDIENTE RECOGER
+VISTA CON TABS PARA PENDIENTES 
+
+VALIDAR EN EL USUARIO CON LOGIN, PARA CUANDO SE DESHABILITE MANDE A LA PARTE DE USUARIO
+
+PANTALLA DE ENTREGADOS CON UN BUSCADOR, QUE INCLUYA POSIBLE NOMBRE DE FARMACIA Y O PRODUCTOS
+
+
+SE NECESITA CONSULTA QUE REGRESE LOS HORARIOS
+
+PENDIENTES HORARIOS DE ATENCION FARMACIA
+PETICION CAMBIO DE ESTADO DE LOS RECIBOS
+PENDIENTE BOOLEANO DE ESTAOD DE USUARIO
+
+
+TOMAR COORDENAS PARA LUEGO CONSTRASTAR SI ESTA CERCA DE LA FARMACIA
+
+pasar los nombres de productos a mayusculas siempre
+
+
+al abrir el app necesito la lista de farmacias 
+lista de transferencias activas para filtrar por distancia
+
+actualizar estado de transferencia me debe disparar una actualizacion en la vista
+
+para vista de transferencias terminadas
+getTransfFarm
+
+
+
+FARMACIA ACEPTA
+
+carpeta android/
+-/gradlew signinReport
+
+variant debug
+
+sha1
+19:44:C8:23:8B:15:F3:C5:5D:7A:62:5A:2D:1C:32:B0:F9:C9:E0:30
+
+
+variant release
+sha1
+19:44:C8:23:8B:15:F3:C5:5D:7A:62:5A:2D:1C:32:B0:F9:C9:E0:30
+
+
+Store: C:\Users\edwar\.android\debug.keystore
+sha1
+C5:37:90:8B:12:88:66:95:08:66:C5:4F:4D:BF:51:A3:81:92:87:45
+sha256
+A6:21:7D:2D:48:92:9B:99:74:C9:78:D4:56:BB:B1:2C:6E:77:4F:72:C1:93:38:62:C6:08:4C:74:5F:D6:97:4D
+
+
+Daniel Borja
+SHA1: BE:F6:4A:91:83:56:08:D6:E3:E4:7A:F4:04:78:A7:52:67:E6:1A:F8
+SHA-256: 62:0D:66:06:5A:78:F3:04:75:E2:6C:8F:F5:F1:E7:F7:4C:78:B8:0A:79:02:8D:68:32:50:7D:60:2C:FE:ED:37
+
+
+
+agregar un connectivy al starting para evitar peticion http sin conexion a red.
+
+cambiar a supscripcion
+
+agregar el buscador
+
+
+accion=recogerEnFarma&trans_farma_acepta=ECO%20QUITO%20LAS%20ORQUIDEAS&farmaUserEmail=emoticsas%40gmail.com&database=admin_Smart
+
+
+crear la lista farmacias con pendientes, que contiene: nombre, cantidad de pendientes, coordenadas.
