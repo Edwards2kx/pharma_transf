@@ -81,7 +81,7 @@ class TransferCardState extends State<TransferCard> {
               ],
             ),
             const Divider(),
-            Text(transferencia.transfProducto?? '', style: textStyleValue),
+            Text(transferencia.transfProducto ?? '', style: textStyleValue),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Text('Ent. ${transferencia.transfCantidadEntera}',
                   style: textStyleValue),
@@ -133,18 +133,25 @@ class TransferCardState extends State<TransferCard> {
         context: context,
         builder: (_) {
           return AlertDialog(
-            title: const Text('¿Quieres cambiar el estado de la transferencia?'),
+            title: const Text('Cambiar estado'),
+            // title: const Text('¿Quieres cambiar el estado de la transferencia?'),
+            content:
+                const Text('¿Quieres cambiar el estado de la transferencia?'),
             actions: [
-              MaterialButton(
-                  onPressed: () => Navigator.pop(context), child: Text('No')),
-              MaterialButton(
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('No'),
+              ),
+              const SizedBox(width: 8),
+              FilledButton.tonal(
                   onPressed: () async {
                     if (estadoTransferencia == EstadoTransferencia.pendiente) {
                       await updateTransfRetiro(transferencia, user!.usersEmail);
                     }
 
                     if (estadoTransferencia == EstadoTransferencia.recogido) {
-                      await updateTransfEntrega(transferencia, user!.usersEmail);
+                      await updateTransfEntrega(
+                          transferencia, user!.usersEmail);
                     }
                     provider.updateTransferencias();
 

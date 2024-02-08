@@ -5,6 +5,7 @@ class AppTheme {
     return ThemeData(
       colorSchemeSeed: Colors.blue,
       useMaterial3: true,
+      scaffoldBackgroundColor: Colors.white
     );
   }
 }

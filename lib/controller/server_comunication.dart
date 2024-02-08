@@ -4,10 +4,6 @@ import 'package:pharma_transfer/models/pharma_model.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
 import 'package:pharma_transfer/models/user_model.dart';
-// import 'package:text_recognition_ml_firebase/models/reciboModel.dart';
-// import 'package:text_recognition_ml_firebase/models/trasferenciaModel.dart';
-// import 'package:text_recognition_ml_firebase/models/userModel.dart';
-// import '../models/pharmaModel.dart';
 
 Future<List<Pharma>> getPharmaFromServer() async {
   var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
@@ -34,6 +30,7 @@ Future<List<Pharma>> getPharmaFromServer() async {
 Future<List<Transferencia>> getActiveTransferList() async {
   var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
 
+//TODO: ESTO SE USARA PARA LAS TRANSFERENCIAS ACTIVAS O PARA ENTREGAR
   final resp = await http.post(url, body: {
     "accion": "getTransf",
     "database": "admin_Smart",
@@ -57,6 +54,8 @@ Future<List<Transferencia>> getActiveTransferList() async {
 Future<List<Transferencia>> getAlternateTransferList() async {
   var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
 
+//TODO: ESTO CAMBIARA PARA TRAER LAS ULTIMAS 1000 CONSULTAS
+//TODO: SE ENVIARA LA DEPENDENCIA DE LA FARMACIA O EL CORREO DEL USUARIO
   final resp = await http.post(url, body: {
     "accion": "getTransfFarm",
     "database": "admin_Smart",
@@ -215,7 +214,7 @@ Future<User?> getUserWithEmail(String email) async {
   }
   return null;
 }
-
+//TODO: revisar donde se usa
 Future<List<Transferencia>> getProductsToPick(
     String pharmaName, String user) async {
   var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');

@@ -19,11 +19,18 @@ class Producto {
 
   factory Producto.fromMap(Map<String, dynamic> map) {
     return Producto(
-      nombre: map['NOMBRE'] as String,
-      ent: map['ENT'] as int,
-      frac: map['FRAC'] as int,
+      nombre: map['nombre'] as String,
+      ent: map['ent'] as int,
+      frac: map['frac'] as int,
     );
   }
+  // factory Producto.fromMap(Map<String, dynamic> map) {
+  //   return Producto(
+  //     nombre: map['NOMBRE'] as String,
+  //     ent: map['ENT'] as int,
+  //     frac: map['FRAC'] as int,
+  //   );
+  // }
 
   String toJson() => json.encode(toMap());
 

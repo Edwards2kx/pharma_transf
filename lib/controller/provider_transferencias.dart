@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
-// import 'package:latlong2/latlong.dart';
-// import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:pharma_transfer/config/python_gemini_prompt.dart';
 import 'package:pharma_transfer/models/pharma_model.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
 import 'package:string_similarity/string_similarity.dart';
@@ -47,13 +46,13 @@ class ProviderTransferencias extends ChangeNotifier {
     await getCurrentUser();
     await whichPharmaAmIIn();
     lastUpdate = DateTime.now();
-    print('se refresco el provider');
+    debugPrint('se refresco el provider');
     notifyListeners();
   }
 
   Future<void> getPharmaInfo() async {
     pharmaList = await getPharmaFromServer();
-    print(' se actualizo la lista de farmacias ${pharmaList.length} elementos');
+    debugPrint(' se actualizo la lista de farmacias ${pharmaList.length} elementos');
 //    notifyListeners();
   }
 
@@ -111,12 +110,22 @@ class ProviderTransferencias extends ChangeNotifier {
     return currentPharma;
   }
 
-  Future<Either<String, Recibo>> procesarImagenRecibo(String imagePath) async {
-    final imageFile = File(imagePath);
-    final gemini = Gemini.instance;
+  // Future<Either<String, Recibo>> procesarImagenRecibo(String imagePath, [Uint8List? imageBytes] ) async {
+  Future<Either<String, Recibo>> procesarImagenRecibo(Uint8List? imageBytes) async {
+    // final imageFile = File(imagePath);
 
-    final geminiResponse = await gemini.textAndImage(
-        text: kPromptDecodeTicket, images: [imageFile.readAsBytesSync()]);
+    if (imageBytes == null) return const Left('No seleccionaste ninguna imagen');
+    final gemini = Gemini.instance;
+    // final 
+    // final geminiResponse = await gemini.textAndImage(
+    //     text: kPromptDecodeTicket, images: [imageFile.readAsBytesSync()]);
+
+      final geminiResponse = await gemini.textAndImage(
+        text: kPythonPromptDecodeTicket, images: [imageBytes]);
+
+
+    // final geminiResponse = await gemini.textAndImage(
+    //     text: kPythonPromptDecodeTicket, images: [imageFile.readAsBytesSync()]);
 
     final response = geminiResponse?.content?.parts?.first.text;
     debugPrint('raw response from gemini server $response');
@@ -127,6 +136,7 @@ class ProviderTransferencias extends ChangeNotifier {
         response.indexOf('{'), response.lastIndexOf('}') + 1);
     final json = jsonDecode(sanitizedResponse);
     final result = json['result'];
+    final error = json['error'];
     if (result == null) {
       return const Left('Se presentó un fallo, intenta nueamente');
     }
@@ -146,9 +156,11 @@ class ProviderTransferencias extends ChangeNotifier {
       debugPrint(reciboValidated.toString());
       return Right(reciboValidated);
     }
-    if (result == 'ERROR') {
-      debugPrint('se presento el siguiente error ${json['body']}');
-      return Left(json['body']);
+    // if (result == 'ERROR') {
+    if (error != null) {
+      debugPrint('se presento el siguiente error ${json['body']['message'].toString()}.');
+      // return Left(json['body']['message'].toString());
+      return Left(error.toString());
     }
     return const Left('Error al procesar la imagen');
   }

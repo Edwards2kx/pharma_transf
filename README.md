@@ -46,31 +46,33 @@ gemini api_key AIzaSyDIZJ0ZW4WoRxQt00twWLWhLFTALs0auMU
 los metodos del controller server_comunication.dart deben estar en una clase la cual debe ser accedida desde un provider no desde las vistas.
 
 
+cambiar la vista principal para que aparezca farmacias
+para entregar en la parte superior, y no obligar
+a tener la pantalla dividida si no hay farmacias para entregar
+
+revisar la opcion de que a las farmacias para recoger
+aparezca un contador de produtos a recoger en ella
+
+cambiar los mensajes de errores o falta de información
+
+quien recoge un producto es quien la puede entregar sino está marcada con su correo no puede modificarla
+
+en la tarjeta que se vea el correo de quien la marco como recogida.
+
+
+en historial, user acepta remover, colocar quien recogio y quien entrego.
+
+en la pantalla principal , solo cuente las farmacias para entregar donde el usuario es el poseedor del 
+paquete. 
+
+1. las farmacias que no están en la base de datos se deben registrar en la primera visita.
+
+2. solo el que recoge entrega, solo es visible las farmacias para entregar donde yo tengo 
+
+3. el rol de dependiente solo ve el historial de la farmacia a la que está relacionado
 
 
 
- {
- "FECHA": "2024-01-26 19:14:21",
- "NRO. TRANSFERENCIA": "2125-501-0001761",
- "USU. SOLI. TRANSF.": "LYASENCIO",
- "FAR. SOLI. TRANSF.": "ECO CONOCOT MONTFUAR",
- "USU. AUTO. TRANSF.": "EMAZANA",
-"FAR. AUTO. TRANS": "MEDI PLAZA TUMBACO",
- "PRODUCTOS": 
-    [
-        {"NOMBRE": "LENZETTO SOL POLVO 1.53MG/DOSIS * 8.1ML", "ENT" : 1 , "FRAC" : 0}
-    ]
- }
 
- {
-  "FECHA": "2024-01-26 19:14:21",
-  "NRO. TRANSFERENCIA": "2125-501-0001761",
-  "USU. SOLI. TRANSF.": "LYASENCIO",
-  "FAR. SOLI. TRANSF.": "ECO CONOCOT MONTFUAR",
-  "USU. AUTO. TRANSF.": "EMAZANA",
- "FAR. AUTO. TRANS": "MEDI PLAZA TUMBACO",
-  "PRODUCTOS": 
-     [
-         {"NOMBRE": "LENZETTO SOL POLVO 1.53MG/DOSIS * 8.1ML", "ENT" : 1 , "FRAC" : 0}
-     ]
-  }
+
+

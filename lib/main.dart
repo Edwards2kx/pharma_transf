@@ -10,7 +10,8 @@ import 'controller/provider_transferencias.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  Gemini.init(apiKey: 'AIzaSyDIZJ0ZW4WoRxQt00twWLWhLFTALs0auMU');
+  // GeminiModel()
+  Gemini.init(apiKey: 'AIzaSyDIZJ0ZW4WoRxQt00twWLWhLFTALs0auMU', generationConfig: GenerationConfig(temperature: 0));
 
   runApp(
     MultiProvider(
@@ -30,6 +31,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       theme: AppTheme().getTheme(),
       routerConfig: appRouter,
     );

@@ -28,10 +28,8 @@ class ReciboResumenReduce extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Fecha: ${recibo.fecha}', style: textTheme),
-              Text('numeroTransferencia: ${recibo.numeroTransferencia}',
+              Text('NoTransferencia: ${recibo.numeroTransferencia}',
                   style: textTheme),
-              Text('usuSoliTransf: ${recibo.usuSoliTransf}', style: textTheme),
-              Text('farSoliTransf: ${recibo.farSoliTransf}', style: textTheme),
               Text('usuSoliTransf: ${recibo.usuSoliTransf}', style: textTheme),
               Text('farSoliTransf: ${recibo.farSoliTransf}', style: textTheme),
               Text('usuAutoTransf: ${recibo.usuAutoTransf}', style: textTheme),
@@ -41,47 +39,56 @@ class ReciboResumenReduce extends StatelessWidget {
                   .map((e) => Text(
                       'Producto ${e.nombre} \n Ent: ${e.ent} Frac: ${e.frac}'))
                   .toList(),
-              ElevatedButton(
-                  onPressed: () async {
-                    await showDialog(
-                        context: context,
-                        builder: (_) {
-                          return AlertDialog(
-                              title: const Text('Registrar información?'),
-                              actions: [
-                                TextButton(
-                                  child: const Text('No'),
-                                  onPressed: () => Navigator.pop(context),
-                                ),
-                                TextButton(
-                                  child: const Text('Si'),
-                                  onPressed: () async {
-                                    final response =
-                                        await pushTransferencia(recibo);
-                                    // final response = true;
-
-                                    final snackBar = SnackBar(
-                                      content: Text(response
-                                          ? 'Registro exitoso'
-                                          : 'Se presento un error, intenta nuevamente'),
-                                    );
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                  },
-                                ),
-                              ]);
-                        });
-                  },
-                  child: const Center(
-                      child: Text(
-                    'Subir Información',
-                  )))
+              // Align(
+              //   alignment: Alignment.center,
+              //   child: FilledButton(
+              //       onPressed: () async {
+              //         await _showConfirmation(context);
+              //       },
+              //       child: const Padding(
+              //         padding: EdgeInsets.all(8.0),
+              //         child: Text('Registrar Información'),
+              //       )),
+              // )
             ],
           ),
         ),
       ),
     );
   }
+
+//   Future<void> _showConfirmation(BuildContext context) async {
+//     await showDialog(
+//         context: context,
+//         builder: (_) {
+//           final contenido =
+//               "Fecha: ${recibo.fecha}\nNoTransferencia: ${recibo.numeroTransferencia}\nusuSoliTransf: ${recibo.usuSoliTransf}\nfarSoliTransf: ${recibo.farSoliTransf}\nusuAutoTransf: ${recibo.usuAutoTransf}\nfarAutoTransf: ${recibo.farAutoTransf}";
+//           return AlertDialog(
+//               title: const Center(child: Text('Registro')),
+//               content: Text(
+//                   '¿Deseas registar la información como aparece en el resumen?\n\n$contenido'),
+//               // backgroundColor: Colors.grey.shade100,
+//               actions: [
+//                 TextButton(
+//                   child: const Text('No'),
+//                   onPressed: () => Navigator.pop(context),
+//                 ),
+//                 FilledButton(
+//                   child: const Text('Si'),
+//                   onPressed: () async {
+//                     final response = await pushTransferencia(recibo);
+// //TODO: mejorar este snackbar
+//                     final snackBar = SnackBar(
+//                       content: Text(response
+//                           ? 'Registro exitoso'
+//                           : 'Se presento un error, intenta nuevamente'),
+//                     );
+//                     Navigator.pop(context);
+//                     Navigator.pop(context);
+//                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+//                   },
+//                 ),
+//               ]);
+//         });
+//   }
 }

@@ -1,5 +1,5 @@
 const String kPromptDecodeTicket = '''
-En la imagen puede haber un recibo, la imagen podria estar rotada, requiero como respuesta un objeto JSON con la siguiente información:
+En la imagen puede haber un recibo, requiero como respuesta un objeto JSON con la siguiente información:
 
 **Productos:**
 * **NOMBRE:** {{extract_table: "NOMBRE", "ENT", "FRAC"}}

@@ -233,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  custom_image_crop:
+    dependency: "direct main"
+    description:
+      name: custom_image_crop
+      sha256: "2f384962a15e18805f51b812fde1eb3e4ef3c5ee38a4a682a6bccdff2a56248e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.13"
   custom_lint:
     dependency: "direct dev"
     description:
@@ -480,6 +488,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.2"
+  gesture_x_detector:
+    dependency: transitive
+    description:
+      name: gesture_x_detector
+      sha256: "777855ee4e1fa4d677c40d6a44b9106696ef6745879027c8871e334cee8cde1e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   glob:
     dependency: transitive
     description:

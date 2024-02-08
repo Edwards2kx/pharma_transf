@@ -22,38 +22,36 @@ class TransfPageState extends State<TransfPage> {
 
     return RefreshIndicator(
       onRefresh: provider.updateTransferencias,
-      child: Column(
-        children: [
-          const Text(
-            'Transferencias pendientes',
-            style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.w300,
-                color: Colors.black87),
-          ),
-          const SizedBox(height: 8.0),
-          SwitchListTile(
-              title: currentPharma != null
-                  ? Text('Solo farmacia actual \n${currentPharma.farmasName}')
-                  : const Text('Solo farmacia actual'),
-              value: onlyNearPharma,
-              onChanged: (v) {
-                setState(() {
-                  onlyNearPharma = v;
-                });
-              }),
-
-          // TODO: agrego un la validacion del switch si esta en todos muestro el future (saco
-          // las transferencias actuales del provider sino consulto por farmacia actual)
-          //future: getProductsToPick("MEDI PLAZA EL TRIANGULO", user.usersEmail),
-          //future: getProductsToPick("MEDI PLAZA EL TRIANGULO", "EMOTICSAS@GMAIL.COM"),
-
-          onlyNearPharma
-              ? Expanded(
-                  child: buildNearPharmaTransferList(
-                      context, transferencias, currentPharma))
-              : Expanded(child: buildFullTransferList(context, transferencias))
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Column(
+          children: [
+            const Text(
+              'Transferencias pendientes',
+              style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.black87),
+            ),
+            const SizedBox(height: 8.0),
+            SwitchListTile(
+                title: currentPharma != null
+                    ? Text('Solo farmacia actual \n${currentPharma.farmasName}')
+                    : const Text('Solo farmacia actual'),
+                value: onlyNearPharma,
+                onChanged: (v) {
+                  setState(() {
+                    onlyNearPharma = v;
+                  });
+                }),
+        
+            onlyNearPharma
+                ? Expanded(
+                    child: buildNearPharmaTransferList(
+                        context, transferencias, currentPharma))
+                : Expanded(child: buildFullTransferList(context, transferencias))
+          ],
+        ),
       ),
     );
   }

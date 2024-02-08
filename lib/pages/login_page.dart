@@ -23,7 +23,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void navigateToHome() {
      Provider.of<ProviderTransferencias>(context, listen: false).updateTransferencias();
-    context.push(HomePage.route);
+    // context.push(HomePage.route);
+    context.go(HomePage.route);
   }
 
   @override
@@ -114,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text('Inicia con tu cuenta Google   ',
-                      style: TextStyle(color: Colors.white, fontSize: 22.0)),
+                      style: TextStyle(color: Colors.white, fontSize: 16.0)),
                   Icon(Icons.login, color: Colors.white)
                 ],
               ),

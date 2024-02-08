@@ -31,6 +31,7 @@ dependencies:
   flutter_riverpod: ^2.4.10
   riverpod_annotation: ^2.3.4
   geolocator: ^10.1.0
+  custom_image_crop: ^0.0.13
 
   # firebase_ml_vision: ^0.11.0
 

@@ -18,7 +18,8 @@ class DoneTransfPageState extends State<DoneTransfPage> {
   TextEditingController searchBoxController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ProviderTransferencias>(context, listen: true);
+    final provider =
+        Provider.of<ProviderTransferencias>(context, listen: false);
     //final List<Transferencia> transferencias = provider.transfList;
     final List<Transferencia> transferencias = provider.transfListAlternative;
     return SizedBox(
@@ -36,27 +37,29 @@ class DoneTransfPageState extends State<DoneTransfPage> {
                     color: Colors.black87)),
             const SizedBox(height: 8.0),
             Container(
-              margin: const EdgeInsetsDirectional.all(16.0),
-              padding: const EdgeInsetsDirectional.all(8.0),
+              // margin: const EdgeInsetsDirectional.all(16.0),
+              padding: const EdgeInsetsDirectional.symmetric(
+                  vertical: 8, horizontal: 16),
               child: Center(
                 child: TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       fillColor: Colors.white,
                       filled: true,
-                      suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                      suffixIcon: Icon(Icons.search, color: Colors.grey),
                       hintText: 'Buscar por farmacia o producto',
-                      contentPadding: const EdgeInsets.symmetric(
+                      contentPadding: EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 20.0),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
+                      // enabledBorder: OutlineInputBorder(
+                      //   borderRadius: BorderRadius.circular(16.0),
+                      // ),
+                      // focusedBorder: OutlineInputBorder(
+                      //   borderRadius: BorderRadius.circular(16.0),
+                      // ),
                     ),
                     cursorColor: Colors.white,
                     autofocus: false,
-                    style: const TextStyle(color: Colors.black38),
+                    style: const TextStyle(color: Colors.black54),
+                    // style: const TextStyle(color: Colors.white),
                     controller: searchBoxController,
                     onChanged: (s) {
                       setState(() {
@@ -71,17 +74,20 @@ class DoneTransfPageState extends State<DoneTransfPage> {
               ),
             ),
             Expanded(
-              child: _buildCardTransferencia(transferencias, searchString) ??
-                  ListView(
-                    children: [
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.only(top: 100.0),
-                          child: const Text('No se encontraron registros'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: _buildCardTransferencia(transferencias, searchString) ??
+                    ListView(
+                      children: [
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.only(top: 100.0),
+                            child: const Text('No se encontraron registros'),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+              ),
             )
           ],
         ),

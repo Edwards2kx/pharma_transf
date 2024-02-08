@@ -75,16 +75,28 @@ class Recibo {
 
   factory Recibo.fromMap(Map<String, dynamic> map) {
     return Recibo(
-      fecha: map['FECHA'] as String,
-      numeroTransferencia: map['NRO.TRANSFERENCIA'] as String,
-      usuSoliTransf: map['USU.SOLI.TRANSF'] as String,
-      farSoliTransf: map['FAR.SOLI.TRANSF'] as String,
-      usuAutoTransf: map['USU.AUTO.TRANSF'] as String,
-      farAutoTransf: map['FAR.AUTO.TRANS'] as String,
+      fecha: map['fecha'] as String,
+      numeroTransferencia: map['nroTransferencia'] as String,
+      usuSoliTransf: map['usuSoliTransf'] as String,
+      farSoliTransf: map['farSoliTransf'] as String,
+      usuAutoTransf: map['usuAutoTransf'] as String,
+      farAutoTransf: map['farAutoTransf'] as String,
       // producto: []
-      producto: List<Producto>.from((map['PRODUCTOS'] as List).map<Producto>((x) => Producto.fromMap(x as Map<String,dynamic>),),),
+      producto: List<Producto>.from((map['productos'] as List).map<Producto>((x) => Producto.fromMap(x as Map<String,dynamic>),),),
     );
   }
+  // factory Recibo.fromMap(Map<String, dynamic> map) {
+  //   return Recibo(
+  //     fecha: map['FECHA'] as String,
+  //     numeroTransferencia: map['NRO.TRANSFERENCIA'] ?? map['NRO. TRANSFERENCIA'],
+  //     usuSoliTransf: map['USU.SOLI.TRANSF'] as String,
+  //     farSoliTransf: map['FAR.SOLI.TRANSF'] as String,
+  //     usuAutoTransf: map['USU.AUTO.TRANSF'] as String,
+  //     farAutoTransf: map['FAR.AUTO.TRANSF'] as String,
+  //     // producto: []
+  //     producto: List<Producto>.from((map['PRODUCTOS'] as List).map<Producto>((x) => Producto.fromMap(x as Map<String,dynamic>),),),
+  //   );
+  // }
 
   factory Recibo.fromJson(String source) => Recibo.fromMap(json.decode(source) as Map<String, dynamic>);
 

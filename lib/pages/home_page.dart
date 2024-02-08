@@ -1,22 +1,23 @@
+import 'dart:typed_data';
+
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
 import 'package:pharma_transfer/controller/google_sign_in_services.dart';
 import 'package:pharma_transfer/controller/provider_transferencias.dart';
 import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
 import 'package:pharma_transfer/pages/done_transfer_page.dart';
 import 'package:pharma_transfer/pages/pharma_page.dart';
-import 'package:pharma_transfer/pages/result_page.dart';
 import 'package:pharma_transfer/pages/transf_page.dart';
 import 'package:pharma_transfer/pages/widgets/drawer_widget.dart';
+import 'package:pharma_transfer/pages/widgets/image_cropper.dart';
 import 'package:pharma_transfer/pages/widgets/result_sheet_widget.dart';
-
-import 'package:provider/provider.dart';
 
 import 'login_page.dart';
 
@@ -47,6 +48,7 @@ class _HomePageState extends State<HomePage> {
     _connectivity.checkConnectivity().then((value) {
       debugPrint('si hay internet');
 
+//TODO: mover la solicitud de permiso a otro lugar
       Geolocator.requestPermission()
           .then((value) => debugPrint('estado permiso de ubiciación $value'));
     });
@@ -81,7 +83,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ProviderTransferencias>(context, listen: true);
+    final provider = Provider.of<ProviderTransferencias>(context, listen: false);
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final DateTime lastUpdate = provider.lastUpdate;
     if (accountGoogle == null && kallowGuestMode == false) {
@@ -94,7 +96,8 @@ class _HomePageState extends State<HomePage> {
         child: Scaffold(
           key: scaffoldKey,
           appBar: _buildAppBar(lastUpdate),
-          backgroundColor: const Color(0xFFd4d4d4),
+          // backgroundColor: const Color(0xFFd4d4d4),
+          // backgroundColor: const Color(Colors.red),
           drawer: CustomDrawer(
               controller: controller,
               scaffoldKey: scaffoldKey,
@@ -140,6 +143,7 @@ class _HomePageState extends State<HomePage> {
         false;
   }
 
+//TODO: extraer el appbar a un widget y desde allí manejar el provider que actualiza la hora
   AppBar _buildAppBar(DateTime lastUpdate) {
     return AppBar(
       iconTheme: const IconThemeData(color: Colors.white),
@@ -156,28 +160,15 @@ class _HomePageState extends State<HomePage> {
           const Text('Pharma Transf', style: TextStyle(color: Colors.white)),
           Text(
               'Ultima actualización: ${lastUpdate.hour}:${lastUpdate.minute.toString().padLeft(2, '0')}:${lastUpdate.second.toString().padLeft(2, '0')}',
-              style: const TextStyle(color: Colors.white)),
+              style: const TextStyle(fontSize: 12, color: Colors.white)),
         ],
       ),
       actions: [
+        //TODO: validar por las paginas en el controller
         if (showSearchBox == false)
           IconButton(
-            onPressed: () {
-              try {
-                ImagePicker()
-                    .pickImage(source: ImageSource.gallery)
-                    .then((image) {
-                  debugPrint('path de imagen ${image?.path}');
-                  // if (image != null) navigateToResult(context, image.path);
-
-                  if (image != null) {
-                    _showBottomSheet(context, image.path);
-                    // navigateToResult(context, image.path);
-                  }
-                });
-              } catch (e) {
-                debugPrint('excepcion al llamar image picker $e');
-              }
+            onPressed: () async {
+              await getImageAndProcess(ImageSource.gallery);
             },
             icon:
                 const Icon(Icons.image_search, color: Colors.white, size: 32.0),
@@ -186,75 +177,55 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  navigateToResult(BuildContext context, String path) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ResultPage(
-            filePath: path,
-          ),
-        ));
-  }
-
-  void _showBottomSheet(BuildContext context, String imagePath) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double sheetHeight = screenHeight * 0.9;
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        // return ResultPage(filePath: imagePath);
-        return SizedBox(
-          width: double.infinity,
-          height: sheetHeight,
-          child: ResultSheetWidget(filePath: imagePath),
-        );
-        // return Container(
-        //   width: double.infinity,
-        //   padding: const EdgeInsets.all(16.0),
-        //   child: Column(
-        //     mainAxisSize: MainAxisSize.min,
-        //     children: [
-        //       const Text('Contenido del Bottom Sheet'),
-        //       SizedBox(height: 16.0),
-        //       ElevatedButton(
-        //         onPressed: () {
-        //           // Acciones al hacer clic en el botón dentro del Bottom Sheet
-        //           Navigator.pop(context); // Cerrar el Bottom Sheet
-        //         },
-        //         child: Text('Cerrar'),
-        //       ),
-        //     ],
-        //   ),
-        // );
+ 
+  FloatingActionButton _floatButton() {
+    return FloatingActionButton.large(
+      child: const Icon(Icons.add_a_photo, color: Colors.black87),
+      onPressed: () async {
+        await getImageAndProcess(ImageSource.camera);
       },
     );
   }
 
-  FloatingActionButton _floatButton() {
-    return FloatingActionButton(
-        child: const Icon(Icons.add_a_photo, color: Colors.black87),
-        onPressed: () async {
-          var img = await ImagePicker().pickImage(source: ImageSource.camera);
-          String? imageRoute;
-          if (img != null) {
-            if (kUseCropper == true) {
-              final croppedImage = await ImageCropper()
-                  .cropImage(sourcePath: img.path, uiSettings: [
-                AndroidUiSettings(
-                    toolbarTitle: 'Corta alrededor del recibo',
-                    hideBottomControls: true)
-              ], aspectRatioPresets: [
-                CropAspectRatioPreset.ratio16x9
-              ]);
-              imageRoute = croppedImage?.path;
-            } else {
-              imageRoute = img.path;
-            }
+  Future<void> getImageAndProcess(ImageSource imageSource) async {
+    try {
+      final imagePicker = ImagePicker();
+      final imageFile = await imagePicker.pickImage(source: imageSource);
+      if (imageFile == null) return;
+      final imageCropped = await _callImageCropper(imageFile.path);
+      if (imageCropped == null) return;
+      _showImageResultBottomSheet(imageCropped);
+    } catch (e) {
+      debugPrint('Error al seleccionar la imagen: $e');
+    }
+  }
 
-            imageRoute = img.path;
-            debugPrint('la ruta de la imagen cortada es $imageRoute');
-            // navigateToResult(context, imageRoute);
-          }
-        });
+  Future<Uint8List?> _callImageCropper(String imagePath) async {
+    return await Navigator.push<Uint8List>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CropperWidget(
+          title: 'Recorta y endereza la imagen',
+          imagePath: imagePath,
+        ),
+      ),
+    );
+  }
+
+//llama al bottom sheet que muestra la información de la imagen
+  void _showImageResultBottomSheet(Uint8List image) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double sheetHeight = screenHeight * 0.9;
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          width: double.infinity,
+          height: sheetHeight,
+          child: ResultSheetWidget(image: image),
+        );
+      },
+    );
   }
 }
