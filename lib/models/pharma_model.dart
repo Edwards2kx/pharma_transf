@@ -3,6 +3,7 @@ import 'dart:convert';
 List<Pharma> pharmaFromJson(String str) =>
     List<Pharma>.from(json.decode(str).map((x) => Pharma.fromJson(x)));
 
+//TODO: agregar un equatable
 class Pharma {
   Pharma(
       {this.farmasId,
@@ -28,5 +29,26 @@ class Pharma {
   @override
   String toString() {
     return 'Pharma { farmasId: $farmasId, farmasName: $farmasName, farmasLat: $farmasLat, farmasLon: $farmasLon, farmasHorario: $farmasHorario }';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Pharma &&
+        farmasId == other.farmasId &&
+        farmasName == other.farmasName &&
+        farmasLat == other.farmasLat &&
+        farmasLon == other.farmasLon &&
+        farmasHorario == other.farmasHorario;
+  }
+
+  @override
+  int get hashCode {
+    return farmasId.hashCode ^
+        farmasName.hashCode ^
+        farmasLat.hashCode ^
+        farmasLon.hashCode ^
+        farmasHorario.hashCode;
   }
 }

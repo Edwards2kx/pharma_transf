@@ -73,6 +73,18 @@ paquete.
 
 
 
+AGREGAR VISTA DE UBICACIONES
+
+AGREGAR ACCION DE SUBIR UBICACION MOTORIZADO
+AGREGAR ACCION DE CONSULTAR UBICACION MOTORIZADO
+
+ ya - AGREGAR VALIDACION DEL PERMISO DE UBICACION
+
+ modificar drawer remover info innecesaria
+ instalar shorebird
+ agregar vista de mapas
+ 
+
 
 
 

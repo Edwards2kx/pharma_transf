@@ -1,86 +1,142 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:geolocator/geolocator.dart';
-import 'package:pharma_transfer/config/python_gemini_prompt.dart';
+import 'package:pharma_transfer/controller/image_gemini_decoder.dart';
+import 'package:pharma_transfer/controller/transf_service.dart';
 import 'package:pharma_transfer/models/pharma_model.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
-import 'package:string_similarity/string_similarity.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gemini/flutter_gemini.dart';
-import 'package:pharma_transfer/config/gemini_prompt.dart';
 import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
 import 'package:pharma_transfer/models/user_model.dart';
-
 import 'google_sign_in_services.dart';
 
 class ProviderTransferencias extends ChangeNotifier {
-  List<Pharma> pharmaList = [];
-  List<Transferencia> transfList = [];
-  List<Transferencia> transfListAlternative = [];
+  List<Pharma> _pharmaList = [];
+  List<Transferencia> _transferenciasActivas = [];
+  List<Transferencia> _transferenciasTerminadas = [];
   User? currentUser;
   Pharma? currentPharma;
-  // Location _location = Location();
-  double? latitud;
+  double? latitud; //la vista no deveria necesitar latitud y longitud
   double? longitud;
-  // double _distancia = 0;
-  // Distance _distance = Distance();
-
   double minimunDistance = 200.0;
   DateTime lastUpdate = DateTime.now();
   bool firstBoot = false;
+  bool isLoading = false;
 
-  void booted() {
-    firstBoot = true;
-    //notifyListeners();
+  final TransfService transfService = TransfService();
+
+  Set<Pharma> get getFarmaciasParaRecoger => _getFarmaciasParaRecoger();
+
+  Set<Pharma> get getFarmaciasParaEntregar => _getFarmaciasParaEntregar();
+
+
+///Devuelve el listado de transferencias activas sin recoger, o recogidas para entrega
+///del usuario actual.
+  List<Transferencia> get getTransferenciasActivas => _getTransferenciasActivas();
+  //TODO: verificar si es necesario filtrar por relacionadas con usuario o dependiente
+///Devuelve el listado de transferencias terminadas por el usuario actual.
+  List<Transferencia> get getTransferenciasTerminadas =>
+      _transferenciasTerminadas;
+
+
+  List<Transferencia> _getTransferenciasActivas() {
+    return _transferenciasActivas.where((t) {
+      final dataCompleta =
+          t.transfFarmaSolicita != null && t.transfFarmaAcepta != null;
+
+      final sinRecoger = t.estado == EstadoTransferencia.pendiente;
+      final recogidoPorUsuario = t.usuarioRecoge == currentUser?.usersEmail;
+
+      return dataCompleta && (sinRecoger || recogidoPorUsuario);
+    }).toList();
   }
 
+  // List<Transferencia> _getTransferenciasActivas() {
+
+  //   final transferencias = <Transferencia>[];
+
+  //   for (var transferencia in _transferenciasActivas) {
+  //     final dataCompleta = (transferencia.transfFarmaSolicita != null &&
+  //         transferencia.transfFarmaAcepta != null);
+
+  //     final sinRecoger =
+  //         (transferencia.estado == EstadoTransferencia.pendiente);
+
+  //     final recogidoPorUsuario =
+  //         (transferencia.usuarioRecoge == currentUser?.usersEmail);
+
+  //     if (dataCompleta && (sinRecoger || recogidoPorUsuario)) {
+  //       transferencias.add(transferencia);
+  //     }
+  //   }
+  //   return transferencias;
+
+  // }
+
+  @Deprecated(
+      'reemplazado por fetchTransferenciasActivas y fetchTransferenciasTerminadas')
   Future<void> updateTransferencias() async {
+    if (isLoading) return;
+    isLoading == true;
     // if (firstBoot == false) firstBoot = true;
-    transfList = await getActiveTransferList();
-    transfListAlternative = await getAlternateTransferList();
-    pharmaList = await getPharmaFromServer(); // remover
+    _transferenciasActivas = await getActiveTransferList();
+    _pharmaList = await getPharmaFromServer(); // remover
     await getCurrentUser();
-    await whichPharmaAmIIn();
+    await nearPharma();
+    isLoading == false;
     lastUpdate = DateTime.now();
     debugPrint('se refresco el provider');
     notifyListeners();
   }
 
-  Future<void> getPharmaInfo() async {
-    pharmaList = await getPharmaFromServer();
-    debugPrint(' se actualizo la lista de farmacias ${pharmaList.length} elementos');
+
+
+//TODO: devolver un either con mensaje de error
+  Future<void> initialLoad() async {
+    if (isLoading) return;
+    isLoading == true;
+    await getCurrentUser();
+    await getPharmaList();
+    await fetchTransferenciasActivas();
+    await fetchTransferenciasTerminadas();
+    isLoading == false;
+  }
+
+  Future<void> fetchTransferenciasActivas() async {
+    if (isLoading || currentUser == null) return;
+    isLoading == true;
+    _transferenciasActivas =
+        await transfService.getActiveTransfByUser(currentUser!);
+    isLoading == false;
+    lastUpdate = DateTime.now();
+    debugPrint(
+        'se refresco el provider transferencias activas con fetchTransferenciasActivas');
+    notifyListeners();
+  }
+
+  Future<void> fetchTransferenciasTerminadas() async {
+    if (isLoading || currentUser == null) return;
+    isLoading == true;
+    _transferenciasTerminadas =
+        await transfService.getFinishedTransfByUser(currentUser!);
+    isLoading == false;
+    lastUpdate = DateTime.now();
+    debugPrint(
+        'se refresco el provider transferencias terminadas fetchTransferenciasTerminadas');
+    notifyListeners();
+  }
+
+  Future<void> getPharmaList() async {
+    _pharmaList = await getPharmaFromServer();
+    debugPrint(
+        ' se actualizo la lista de farmacias ${_pharmaList.length} elementos');
 //    notifyListeners();
   }
 
-  Future<Pharma?> whichPharmaAmIIn() async {
-    // final locationPermission = await Geolocator.checkPermission();
-    // if (locationPermission == LocationPermission.denied || locationPermission == LocationPermission.deniedForever) return;
-    // final location = await Geolocator.getCurrentPosition();
-    // latitud = location.latitude;
-    // longitud = location.longitude;
-
-    // if(latitud == null || longitud == null) return;
-
-    // if (pharmaList.isEmpty) return;
-
-    //  Distance distance = const Distance();
-    // currentPharma = pharmaList.firstWhere((f) {
-    //   var dis = distance.as(LengthUnit.Meter, LatLng(latitud!, longitud!),
-    //       LatLng(f.farmasLat!, f.farmasLon!));
-    //   return (dis <= minimunDistance);
-    // });
-
-    // if (currentPharma != null) {
-    //   debugPrint('estas en ${currentPharma?.farmasName}');
-    // } else {
-    //   debugPrint('no estas cerca a una farmacia');
-    // }
-
-    final pharmacies = pharmaList;
+  Future<Pharma?> nearPharma() async {
+    final pharmacies = _pharmaList;
     if (pharmacies.isEmpty) return null;
     Position position = await Geolocator.getCurrentPosition();
     latitud = position.latitude;
@@ -106,67 +162,57 @@ class ProviderTransferencias extends ChangeNotifier {
     int index = distances.indexOf(minDistance);
 
     // Retorna la farmacia más cercana
+    //TODO verificar que la distancia esté en el rango minimunDistance
     currentPharma = pharmacies[index];
     return currentPharma;
   }
 
-  // Future<Either<String, Recibo>> procesarImagenRecibo(String imagePath, [Uint8List? imageBytes] ) async {
-  Future<Either<String, Recibo>> procesarImagenRecibo(Uint8List? imageBytes) async {
-    // final imageFile = File(imagePath);
-
-    if (imageBytes == null) return const Left('No seleccionaste ninguna imagen');
-    final gemini = Gemini.instance;
-    // final 
-    // final geminiResponse = await gemini.textAndImage(
-    //     text: kPromptDecodeTicket, images: [imageFile.readAsBytesSync()]);
-
-      final geminiResponse = await gemini.textAndImage(
-        text: kPythonPromptDecodeTicket, images: [imageBytes]);
-
-
-    // final geminiResponse = await gemini.textAndImage(
-    //     text: kPythonPromptDecodeTicket, images: [imageFile.readAsBytesSync()]);
-
-    final response = geminiResponse?.content?.parts?.first.text;
-    debugPrint('raw response from gemini server $response');
-    if (response == null) {
-      return const Left('Se presentó un fallo, intenta nueamente');
-    }
-    final sanitizedResponse = response.substring(
-        response.indexOf('{'), response.lastIndexOf('}') + 1);
-    final json = jsonDecode(sanitizedResponse);
-    final result = json['result'];
-    final error = json['error'];
-    if (result == null) {
-      return const Left('Se presentó un fallo, intenta nueamente');
-    }
-    if (result == 'SUCCESS') {
-      final recibo = Recibo.fromMap(json['body']);
-      final pharmaList = await getPharmaFromServer();
-      final pharmaListNames = pharmaList.map((e) => e.farmasName).toList();
-      final farAutoBestStringComparative =
-          StringSimilarity.findBestMatch(recibo.farAutoTransf, pharmaListNames);
-      final farSoliBestStringComparative =
-          StringSimilarity.findBestMatch(recibo.farSoliTransf, pharmaListNames);
-      final reciboValidated = recibo.copyWith(
-          farAutoTransf:
-              pharmaListNames[farAutoBestStringComparative.bestMatchIndex],
-          farSoliTransf:
-              pharmaListNames[farSoliBestStringComparative.bestMatchIndex]);
-      debugPrint(reciboValidated.toString());
-      return Right(reciboValidated);
-    }
-    // if (result == 'ERROR') {
-    if (error != null) {
-      debugPrint('se presento el siguiente error ${json['body']['message'].toString()}.');
-      // return Left(json['body']['message'].toString());
-      return Left(error.toString());
-    }
-    return const Left('Error al procesar la imagen');
-  }
+  Future<Either<String, Recibo>> procesarImagenRecibo(Uint8List? imageBytes) =>
+      ImageGeminiDecoder.procesarImagen(imageBytes);
 
   Future<void> getCurrentUser() async {
     final accountGoogle = GoogleSignInService.currentUser();
     currentUser = await getUserWithEmail(accountGoogle!.email);
+  }
+
+  Set<Pharma> _getFarmaciasParaEntregar() {
+    Set<Pharma> farmasParaEntregar = {};
+    for (var transferencia in _transferenciasActivas) {
+      final farmaSolicita = transferencia.transfFarmaSolicita;
+      final farmaAcepta = transferencia.transfFarmaAcepta;
+      final estado = transferencia.estado;
+      final dataCompleta = (farmaSolicita != null && farmaAcepta != null);
+      final perteneUsuario =
+          (transferencia.usuarioRecoge == currentUser?.usersEmail);
+
+      if (estado == EstadoTransferencia.recogido &&
+          dataCompleta &&
+          perteneUsuario) {
+        final farmacia = _pharmaList.firstWhere(
+            (f) => f.farmasName == farmaSolicita,
+            orElse: () => Pharma()..farmasName = farmaSolicita);
+        farmasParaEntregar.add(farmacia);
+      }
+    }
+    return farmasParaEntregar;
+  }
+
+  Set<Pharma> _getFarmaciasParaRecoger() {
+    Set<Pharma> farmasParaRecoger = {};
+    for (var transferencia in _transferenciasActivas) {
+      final farmaSolicita = transferencia.transfFarmaSolicita;
+      final farmaAcepta = transferencia.transfFarmaAcepta;
+      final estado = transferencia.estado;
+
+      if (estado == EstadoTransferencia.pendiente &&
+          farmaSolicita != null &&
+          farmaAcepta != null) {
+        final farmacia = _pharmaList.firstWhere(
+            (f) => f.farmasName == farmaAcepta,
+            orElse: () => Pharma()..farmasName = farmaAcepta);
+        farmasParaRecoger.add(farmacia);
+      }
+    }
+    return farmasParaRecoger;
   }
 }

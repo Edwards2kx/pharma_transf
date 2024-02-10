@@ -27,6 +27,7 @@ Future<List<Pharma>> getPharmaFromServer() async {
   return pharmaList;
 }
 
+@Deprecated('reemplazador por metodo [getActiveTransfByUser]')
 Future<List<Transferencia>> getActiveTransferList() async {
   var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
 
@@ -49,31 +50,30 @@ Future<List<Transferencia>> getActiveTransferList() async {
   return transfList;
 }
 
-// //para usar en la vista 3 de transferencias terminadas o filtradas
+// @Deprecated('reemplazador por metodo [getActiveTransfByUser]')
+// Future<List<Transferencia>> getAlternateTransferList() async {
+//   var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
 
-Future<List<Transferencia>> getAlternateTransferList() async {
-  var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
+// //TODO: ESTO CAMBIARA PARA TRAER LAS ULTIMAS 1000 CONSULTAS
+// //TODO: SE ENVIARA LA DEPENDENCIA DE LA FARMACIA O EL CORREO DEL USUARIO
+//   final resp = await http.post(url, body: {
+//     "accion": "getTransfFarm",
+//     "database": "admin_Smart",
+//   });
+//   List<Transferencia> transfList = [];
+//   try {
+//     if (resp.statusCode == 200) {
+//       transfList = transferenciaFromJson(resp.body);
+//     } else {
+//       debugPrint('error en la comunicacion con el servidor');
+//       return [];
+//     }
+//   } catch (e) {
+//     debugPrint('error en getAlternateTransferList $e');
+//   }
 
-//TODO: ESTO CAMBIARA PARA TRAER LAS ULTIMAS 1000 CONSULTAS
-//TODO: SE ENVIARA LA DEPENDENCIA DE LA FARMACIA O EL CORREO DEL USUARIO
-  final resp = await http.post(url, body: {
-    "accion": "getTransfFarm",
-    "database": "admin_Smart",
-  });
-  List<Transferencia> transfList = [];
-  try {
-    if (resp.statusCode == 200) {
-      transfList = transferenciaFromJson(resp.body);
-    } else {
-      debugPrint('error en la comunicacion con el servidor');
-      return [];
-    }
-  } catch (e) {
-    debugPrint('error en getAlternateTransferList $e');
-  }
-
-  return transfList;
-}
+//   return transfList;
+// }
 
 Future<bool> pushTransferencia(Recibo recibo) async {
   var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
@@ -119,6 +119,7 @@ Future<bool> pushTransferencia(Recibo recibo) async {
   return true;
 }
 
+@Deprecated('pasado a la clase  TransfService')
 Future<bool> updateTransfRetiro(
     Transferencia transferencia, String usuarioEmail) async {
   final myUser = await getUserWithEmail(usuarioEmail);
@@ -155,6 +156,7 @@ Future<bool> updateTransfRetiro(
   return false;
 }
 
+@Deprecated('pasado a la clase  TransfService')
 Future<bool> updateTransfEntrega(
     Transferencia transferencia, String usuarioEmail) async {
   final myUser = await getUserWithEmail(usuarioEmail);
@@ -213,28 +215,4 @@ Future<User?> getUserWithEmail(String email) async {
         'error al pasear usuario desde el servidor, ${resp.body} error $e');
   }
   return null;
-}
-//TODO: revisar donde se usa
-Future<List<Transferencia>> getProductsToPick(
-    String pharmaName, String user) async {
-  var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
-
-  final resp = await http.post(url, body: {
-    "accion": "recogerEnFarma",
-    "database": "admin_Smart",
-    "trans_farma_acepta": pharmaName,
-    "farmaUserEmail": user
-  });
-  List<Transferencia> transfList = [];
-  try {
-    if (resp.statusCode == 200) {
-      transfList = transferenciaFromJson(resp.body);
-    } else {
-      debugPrint('error en la comunicacion con el servidor');
-      return [];
-    }
-  } catch (e) {
-    debugPrint('error en getProductsToPick $e');
-  }
-  return transfList;
 }

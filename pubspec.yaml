@@ -32,6 +32,8 @@ dependencies:
   riverpod_annotation: ^2.3.4
   geolocator: ^10.1.0
   custom_image_crop: ^0.0.13
+  lottie: ^2.7.0
+  loader_overlay: ^4.0.0
 
   # firebase_ml_vision: ^0.11.0
 
@@ -53,3 +55,4 @@ flutter:
     - assets/no_image.jpg
     - assets/background_pattern.jpg
     - assets/background_pattern_pharma.jpg
+    - assets/loading_animation.json

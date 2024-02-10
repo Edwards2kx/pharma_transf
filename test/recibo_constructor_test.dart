@@ -26,8 +26,8 @@ print (response);
     final listaActiva = await getActiveTransferList();
     print(listaActiva.length);
 
-    final listaAlternativa = await getAlternateTransferList();
-    print(listaAlternativa.length);
+    // final listaAlternativa = await getAlternateTransferList();
+    // print(listaAlternativa.length);
 
     final user = await getUserWithEmail('emoticsas@gmail.com');
     print(user);

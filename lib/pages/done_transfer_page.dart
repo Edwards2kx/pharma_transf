@@ -20,13 +20,14 @@ class DoneTransfPageState extends State<DoneTransfPage> {
   Widget build(BuildContext context) {
     final provider =
         Provider.of<ProviderTransferencias>(context, listen: false);
-    //final List<Transferencia> transferencias = provider.transfList;
-    final List<Transferencia> transferencias = provider.transfListAlternative;
+    final List<Transferencia> transferencias =
+        provider.getTransferenciasTerminadas;
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
       child: RefreshIndicator(
-        onRefresh: provider.updateTransferencias,
+        // onRefresh: provider.updateTransferencias,
+        onRefresh: provider.fetchTransferenciasTerminadas,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -42,35 +43,29 @@ class DoneTransfPageState extends State<DoneTransfPage> {
                   vertical: 8, horizontal: 16),
               child: Center(
                 child: TextField(
-                    decoration: const InputDecoration(
-                      fillColor: Colors.white,
-                      filled: true,
-                      suffixIcon: Icon(Icons.search, color: Colors.grey),
-                      hintText: 'Buscar por farmacia o producto',
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 20.0),
-                      // enabledBorder: OutlineInputBorder(
-                      //   borderRadius: BorderRadius.circular(16.0),
-                      // ),
-                      // focusedBorder: OutlineInputBorder(
-                      //   borderRadius: BorderRadius.circular(16.0),
-                      // ),
-                    ),
-                    cursorColor: Colors.white,
-                    autofocus: false,
-                    style: const TextStyle(color: Colors.black54),
-                    // style: const TextStyle(color: Colors.white),
-                    controller: searchBoxController,
-                    onChanged: (s) {
-                      setState(() {
-                        searchString = s;
-                      });
-                    },
-                    onSubmitted: (s) {
-                      setState(() {
-                        searchString = s;
-                      });
-                    }),
+                  decoration: const InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    suffixIcon: Icon(Icons.search, color: Colors.grey),
+                    hintText: 'Buscar por farmacia o producto',
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                  ),
+                  cursorColor: Colors.white,
+                  autofocus: false,
+                  style: const TextStyle(color: Colors.black54),
+                  controller: searchBoxController,
+                  onChanged: (s) {
+                    setState(() {
+                      searchString = s;
+                    });
+                  },
+                  onSubmitted: (s) {
+                    setState(() {
+                      searchString = s;
+                    });
+                  },
+                ),
               ),
             ),
             Expanded(

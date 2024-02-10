@@ -19,8 +19,8 @@ class Transferencia {
     this.transfProducto,
     this.transfCantidadEntera,
     this.transfCantidadFraccion,
-    this.transfUsrRecoge,
-    this.transfUsrEntrega,
+    this.usuarioRecoge,
+    this.usuarioEntrega,
     this.estado = EstadoTransferencia.pendiente,
   });
 
@@ -35,8 +35,8 @@ class Transferencia {
   String? transfProducto;
   String? transfCantidadEntera;
   String? transfCantidadFraccion;
-  String? transfUsrRecoge;
-  String? transfUsrEntrega;
+  String? usuarioRecoge;
+  String? usuarioEntrega; //deberia ser un solo usuario
   EstadoTransferencia estado;
 
   factory Transferencia.fromJson(Map<String, dynamic> json) {
@@ -52,12 +52,12 @@ class Transferencia {
       transfProducto: json["transf_producto"],
       transfCantidadEntera: json["transf_cantidad_entera"],
       transfCantidadFraccion: json["transf_cantidad_fraccion"],
-      transfUsrRecoge: json["transf_usr_recoge"],
-      transfUsrEntrega: json["transf_usr_entrega"],
+      usuarioRecoge: json["transf_usr_recoge"],
+      usuarioEntrega: json["transf_usr_entrega"],
     );
-    if (transferencia.transfUsrRecoge == null) {
+    if (transferencia.usuarioRecoge == null) {
       transferencia.estado = EstadoTransferencia.pendiente;
-    } else if (transferencia.transfUsrEntrega == null) {
+    } else if (transferencia.usuarioEntrega == null) {
       transferencia.estado = EstadoTransferencia.recogido;
     } else {
       transferencia.estado = EstadoTransferencia.entregado;
@@ -78,8 +78,8 @@ class Transferencia {
         'transfProducto: $transfProducto, '
         'transfCantidadEntera: $transfCantidadEntera, '
         'transfCantidadFraccion: $transfCantidadFraccion, '
-        'transfUsrRecoge: $transfUsrRecoge, '
-        'transfUsrEntrega: $transfUsrEntrega, '
+        'transfUsrRecoge: $usuarioRecoge, '
+        'transfUsrEntrega: $usuarioEntrega, '
         'estado: $estado}';
   }
   // EstadoTransferencia? estadoTransferencia() {

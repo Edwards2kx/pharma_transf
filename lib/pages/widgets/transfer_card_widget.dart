@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pharma_transfer/controller/provider_transferencias.dart';
 import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
 import 'package:pharma_transfer/pages/widgets/recibo_resumen_widget.dart';
 import 'package:provider/provider.dart';
 
+//TODO: convertir a stateless widget
 class TransferCard extends StatefulWidget {
   final Transferencia transferencia;
 
@@ -54,14 +56,14 @@ class TransferCardState extends State<TransferCard> {
           children: [
             Row(
               children: [
-                const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Farma solicita'),
-                      Text('Farma acepta'),
-                      Text('User acepta'),
-                      Text('Fecha y Hora'),
-                    ]),
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text('Farma solicita'),
+                  const Text('Farma acepta'),
+                  const Text('User acepta'),
+                  const Text('Fecha y Hora'),
+                  if (transferencia.estado != EstadoTransferencia.pendiente)
+                    const Text('Recogido por'),
+                ]),
                 const SizedBox(width: 10.0),
                 Expanded(
                   child: Column(
@@ -75,6 +77,8 @@ class TransferCardState extends State<TransferCard> {
                           overflow: TextOverflow.ellipsis),
                       Text(
                           '${fechaHora.day.toString().padLeft(2, '0')}/${fechaHora.month.toString().padLeft(2, '0')}/${fechaHora.year} - ${fechaHora.hour.toString().padLeft(2, '0')}:${fechaHora.minute.toString().padLeft(2, '0')}'),
+                      if (transferencia.estado != EstadoTransferencia.pendiente)
+                        Text(transferencia.usuarioRecoge ?? ''),
                     ],
                   ),
                 ),
@@ -92,18 +96,16 @@ class TransferCardState extends State<TransferCard> {
             const Divider(),
             Row(
               children: [
-                MaterialButton(
-                  onPressed: () async {
-                    if (estadoTransferencia != EstadoTransferencia.entregado) {
-                      await _changeTransfState(transferencia);
-                    }
-                  },
-//                    shape: StadiumBorder(),
-                  shape: const RoundedRectangleBorder(),
-                  color: Colors.white,
-                  elevation: 8.0,
-                  child: Text(accion),
-                ),
+                if (transferencia.estado != EstadoTransferencia.entregado)
+                  FilledButton(
+                    onPressed: () async {
+                      if (estadoTransferencia !=
+                          EstadoTransferencia.entregado) {
+                        await _changeTransfState(transferencia);
+                      }
+                    },
+                    child: Text(accion),
+                  ),
                 Expanded(
                   child: Container(),
                 ),
@@ -146,17 +148,22 @@ class TransferCardState extends State<TransferCard> {
               FilledButton.tonal(
                   onPressed: () async {
                     if (estadoTransferencia == EstadoTransferencia.pendiente) {
+                      context.loaderOverlay.show();
                       await updateTransfRetiro(transferencia, user!.usersEmail);
+                      // context.loaderOverlay.hide();
                     }
 
                     if (estadoTransferencia == EstadoTransferencia.recogido) {
+                      context.loaderOverlay.show();
                       await updateTransfEntrega(
                           transferencia, user!.usersEmail);
+                      // context.loaderOverlay.hide();
                     }
-                    provider.updateTransferencias();
+                    await provider.updateTransferencias();
+                    context.loaderOverlay.hide();
 
                     Navigator.pop(context);
-                    setState(() {});
+                    setState(() {}); //TODO: provar remover
                   },
                   child: const Text('Si')),
             ],

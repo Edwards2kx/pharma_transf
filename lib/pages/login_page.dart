@@ -1,10 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pharma_transfer/controller/google_sign_in_services.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:pharma_transfer/controller/provider_transferencias.dart';
 import 'package:provider/provider.dart';
-
 import 'Home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,69 +20,36 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool isSignedIn = false;
-  String message = "Cargando....";
 
-  final _connectivity = Connectivity();
+  final snackBarError = SnackBar(
+    content: const Text('Se requiere el permiso de ubicación para continuar'),
+    action: SnackBarAction(
+        label: 'Configuración',
+        onPressed: () => Geolocator.openLocationSettings()),
+  );
 
-  void navigateToHome() {
-     Provider.of<ProviderTransferencias>(context, listen: false).updateTransferencias();
-    // context.push(HomePage.route);
-    context.go(HomePage.route);
-  }
+  final snackBarErrorInternet = const SnackBar(
+    content: Text('No tienes conexión a internet'),
+  );
 
   @override
   void initState() {
-    _connectivity.checkConnectivity().then((value) {
-      if (value == ConnectivityResult.wifi ||
-          value == ConnectivityResult.mobile) {
-        GoogleSignInService.signInSilenty().then((account) {
-          debugPrint('está logueado? ${account?.email}');
-          if (account != null) navigateToHome();
-        });
-
-        GoogleSignInService.isSignedIn().then((value) {
-          isSignedIn = value;
-          var account = GoogleSignInService.currentUser();
-          if (account != null) navigateToHome();
-        });
-      } else {
-        setState(() {
-          message = 'Revisa tu conexión a internet...';
-        });
-        debugPrint('no hay conexion a internet');
-      }
-    });
     super.initState();
+    _checkConnectivityAndSignIn();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       body: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          // child: isSignedIn ? _loading() : _loginProccess()),
-          child: _loginProccess()),
-    );
-  }
-
-  Widget _loading() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(width: 100, height: 1),
-          const CircularProgressIndicator(backgroundColor: Colors.redAccent),
-          const SizedBox(height: 30.0),
-          Text(message),
-        ],
+        width: double.infinity,
+        height: double.infinity,
+        child: loginView(),
       ),
     );
   }
 
-  Widget _loginProccess() {
+  Widget loginView() {
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -95,21 +65,16 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             MaterialButton(
               onPressed: () async {
-                if (isSignedIn) {
-                  bool status = await GoogleSignInService.isSignedIn();
-                  if (status) debugPrint('already signed');
-                } else {
-                  var account = await GoogleSignInService.signInWithGoogle();
-                  if (account != null) {
-                    debugPrint(account.email);
-                    navigateToHome();
-                  }
+                var account = await GoogleSignInService.signInWithGoogle();
+                if (account != null) {
+                  debugPrint(account.email);
+                  navigateToHome();
                 }
               },
               shape: const StadiumBorder(),
               padding:
                   const EdgeInsets.symmetric(vertical: 16.0, horizontal: 22.0),
-              color: isSignedIn ? Colors.black : Colors.red,
+              color: Colors.red,
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -124,5 +89,44 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _checkConnectivityAndSignIn() async {
+    final connectivity = Connectivity();
+    var connectivityResult = await connectivity.checkConnectivity();
+    final isConnected = (connectivityResult == ConnectivityResult.wifi ||
+        connectivityResult == ConnectivityResult.mobile);
+
+    if (!isConnected) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBarErrorInternet);
+      return;
+    }
+    final signInSilenty = await GoogleSignInService.signInSilenty();
+    if (signInSilenty == null) return;
+    navigateToHome();
+  }
+
+//TODO: extraer la logica de permiso ubicacion a un provider booleano
+  void navigateToHome() async {
+    final status = await Geolocator.checkPermission();
+
+    final permisionGranted = (status != LocationPermission.whileInUse &&
+        status != LocationPermission.always);
+    if (permisionGranted) {
+      final newStatus = await Geolocator.requestPermission();
+
+      if (newStatus == LocationPermission.denied ||
+          newStatus == LocationPermission.deniedForever) {
+        ScaffoldMessenger.of(context).showSnackBar(snackBarError);
+        debugPrint('Permiso de ubicación negado');
+        return;
+      }
+    }
+
+    context.loaderOverlay.show();
+    context.read<ProviderTransferencias>().initialLoad().then((_) {
+      context.loaderOverlay.hide();
+      context.go(HomePage.route);
+    });
   }
 }

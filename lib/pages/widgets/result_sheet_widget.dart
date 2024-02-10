@@ -120,6 +120,8 @@ Future<void> _showConfirmation(BuildContext context, Recibo recibo) async {
                 Navigator.pop(context);
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                context.read<ProviderTransferencias>().fetchTransferenciasActivas();
+
               },
             ),
           ],

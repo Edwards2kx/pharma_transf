@@ -17,11 +17,12 @@ class TransfPageState extends State<TransfPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<ProviderTransferencias>(context, listen: true);
 
-    final List<Transferencia> transferencias = provider.transfList;
+    final List<Transferencia> transferencias = provider.getTransferenciasActivas;
     final currentPharma = provider.currentPharma;
 
     return RefreshIndicator(
-      onRefresh: provider.updateTransferencias,
+      // onRefresh: provider.updateTransferencias,
+      onRefresh: provider.fetchTransferenciasActivas,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Column(

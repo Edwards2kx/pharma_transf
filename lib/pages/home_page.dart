@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
@@ -45,18 +44,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    super.initState();
     _connectivity.checkConnectivity().then((value) {
       debugPrint('si hay internet');
-
-//TODO: mover la solicitud de permiso a otro lugar
-      Geolocator.requestPermission()
-          .then((value) => debugPrint('estado permiso de ubiciación $value'));
     });
 
     accountGoogle = GoogleSignInService.currentUser();
-    //guardian de ruta... si es null el usuario activo se devuelve a login
     if (accountGoogle == null) context.go(LoginPage.route);
     getUserWithEmail(accountGoogle!.email).then((user) {
+      debugPrint("$user");
       debugPrint('user existe? ${user?.usersNombre}');
       if (user == null || user.usersEstado == '0') {
         showDialog(
@@ -77,13 +73,12 @@ class _HomePageState extends State<HomePage> {
         );
       }
     });
-
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ProviderTransferencias>(context, listen: false);
+    final provider =
+        Provider.of<ProviderTransferencias>(context, listen: false);
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final DateTime lastUpdate = provider.lastUpdate;
     if (accountGoogle == null && kallowGuestMode == false) {
@@ -96,8 +91,6 @@ class _HomePageState extends State<HomePage> {
         child: Scaffold(
           key: scaffoldKey,
           appBar: _buildAppBar(lastUpdate),
-          // backgroundColor: const Color(0xFFd4d4d4),
-          // backgroundColor: const Color(Colors.red),
           drawer: CustomDrawer(
               controller: controller,
               scaffoldKey: scaffoldKey,
@@ -109,11 +102,9 @@ class _HomePageState extends State<HomePage> {
             child: PageView(
               controller: controller,
               children: [
-                TransfPage(),
-                PharmaPage(),
-                DoneTransfPage(
-                  searchString: searchString,
-                )
+                const TransfPage(),
+                const PharmaPage(),
+                DoneTransfPage(searchString: searchString)
               ],
             ),
           ),
@@ -146,21 +137,24 @@ class _HomePageState extends State<HomePage> {
 //TODO: extraer el appbar a un widget y desde allí manejar el provider que actualiza la hora
   AppBar _buildAppBar(DateTime lastUpdate) {
     return AppBar(
-      iconTheme: const IconThemeData(color: Colors.white),
+      elevation: 24,
+      // iconTheme: const IconThemeData(color: Colors.white),
+      // iconTheme: Theme.of(context).primaryColorDark,
       flexibleSpace: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: <Color>[Colors.blue[200]!, Colors.blue[600]!])),
-      ),
+          // color: Theme.of(context).primaryColor.withOpacity(0.4),
+          // color: Theme.of(context).primaryColorDark.withOpacity(0.4),
+          // color: Theme.of(context).colorScheme.primaryContainer
+          ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Pharma Transf', style: TextStyle(color: Colors.white)),
+          Text(
+            'Pharma Transf',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           Text(
               'Ultima actualización: ${lastUpdate.hour}:${lastUpdate.minute.toString().padLeft(2, '0')}:${lastUpdate.second.toString().padLeft(2, '0')}',
-              style: const TextStyle(fontSize: 12, color: Colors.white)),
+              style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
       actions: [
@@ -170,16 +164,14 @@ class _HomePageState extends State<HomePage> {
             onPressed: () async {
               await getImageAndProcess(ImageSource.gallery);
             },
-            icon:
-                const Icon(Icons.image_search, color: Colors.white, size: 32.0),
+            icon: const Icon(Icons.image_search, size: 32.0),
           ),
       ],
     );
   }
 
- 
   FloatingActionButton _floatButton() {
-    return FloatingActionButton.large(
+    return FloatingActionButton(
       child: const Icon(Icons.add_a_photo, color: Colors.black87),
       onPressed: () async {
         await getImageAndProcess(ImageSource.camera);
