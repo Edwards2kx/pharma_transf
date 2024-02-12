@@ -1,25 +1,22 @@
-
-
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pharma_transfer/controller/server_comunication.dart';
 
-
 void main() {
   test('Recibo constructor from map', () async {
-      Gemini.init(apiKey: 'AIzaSyDIZJ0ZW4WoRxQt00twWLWhLFTALs0auMU', generationConfig: GenerationConfig(temperature: 0.05));
+    Gemini.init(
+        // apiKey: 'AIzaSyDIZJ0ZW4WoRxQt00twWLWhLFTALs0auMU',
+        apiKey: 'AIzaSyD6hiA3ecFA12nPGAJgZln-yvR_bvVZhMw',
+        generationConfig: GenerationConfig(temperature: 0));
     //Arrange
-final gemini = Gemini.instance;
+    final gemini = Gemini.instance;
 
-final response = await gemini.listModels();
-print (response);
-    // .then((models) => print(models)) /// list
-    // .catchError((e) => print('listModels error $e',));
-    // final farmacias = await getPharmaFromServer();
-    // for (var farmacia in farmacias) {
-    //   print(farmacia.farmasName);
-    // }
-    // print(farmacias);
+    final response = await gemini.listModels();
+    // print(response);
+
+        final geminiResponse = await gemini
+        .text('what is the year of the first World War');
+        print(geminiResponse);
   });
 
   test('getAlternateTransferList', () async {

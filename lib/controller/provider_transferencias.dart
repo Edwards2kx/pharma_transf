@@ -3,16 +3,21 @@ import 'dart:typed_data';
 import 'package:geolocator/geolocator.dart';
 import 'package:pharma_transfer/controller/image_gemini_decoder.dart';
 import 'package:pharma_transfer/controller/transf_service.dart';
+import 'package:pharma_transfer/controller/user_location_service.dart';
 import 'package:pharma_transfer/models/pharma_model.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
 import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
+import 'package:pharma_transfer/models/user_location_model.dart';
 import 'package:pharma_transfer/models/user_model.dart';
 import 'google_sign_in_services.dart';
 
 class ProviderTransferencias extends ChangeNotifier {
+  final UserLocationService _locationService = UserLocationService();
+  final TransfService transfService = TransfService();
+
   List<Pharma> _pharmaList = [];
   List<Transferencia> _transferenciasActivas = [];
   List<Transferencia> _transferenciasTerminadas = [];
@@ -24,22 +29,29 @@ class ProviderTransferencias extends ChangeNotifier {
   DateTime lastUpdate = DateTime.now();
   bool firstBoot = false;
   bool isLoading = false;
-
-  final TransfService transfService = TransfService();
+  List<UserLocation> _usersLocationList = [];
 
   Set<Pharma> get getFarmaciasParaRecoger => _getFarmaciasParaRecoger();
 
   Set<Pharma> get getFarmaciasParaEntregar => _getFarmaciasParaEntregar();
 
+  List<Transferencia> get getTransferenciasActivas =>
+      _getTransferenciasActivas();
 
-///Devuelve el listado de transferencias activas sin recoger, o recogidas para entrega
-///del usuario actual.
-  List<Transferencia> get getTransferenciasActivas => _getTransferenciasActivas();
-  //TODO: verificar si es necesario filtrar por relacionadas con usuario o dependiente
-///Devuelve el listado de transferencias terminadas por el usuario actual.
   List<Transferencia> get getTransferenciasTerminadas =>
       _transferenciasTerminadas;
 
+  List<UserLocation> get getUserLocationList => _usersLocationList;
+
+
+  Future<List<UserLocation>> _getUserLocationList() async{
+    List<UserLocation> usersLocation = [];
+    for (var location in _usersLocationList){
+      
+    }
+
+    return [];
+  }
 
   List<Transferencia> _getTransferenciasActivas() {
     return _transferenciasActivas.where((t) {
@@ -52,28 +64,6 @@ class ProviderTransferencias extends ChangeNotifier {
       return dataCompleta && (sinRecoger || recogidoPorUsuario);
     }).toList();
   }
-
-  // List<Transferencia> _getTransferenciasActivas() {
-
-  //   final transferencias = <Transferencia>[];
-
-  //   for (var transferencia in _transferenciasActivas) {
-  //     final dataCompleta = (transferencia.transfFarmaSolicita != null &&
-  //         transferencia.transfFarmaAcepta != null);
-
-  //     final sinRecoger =
-  //         (transferencia.estado == EstadoTransferencia.pendiente);
-
-  //     final recogidoPorUsuario =
-  //         (transferencia.usuarioRecoge == currentUser?.usersEmail);
-
-  //     if (dataCompleta && (sinRecoger || recogidoPorUsuario)) {
-  //       transferencias.add(transferencia);
-  //     }
-  //   }
-  //   return transferencias;
-
-  // }
 
   @Deprecated(
       'reemplazado por fetchTransferenciasActivas y fetchTransferenciasTerminadas')
@@ -88,10 +78,9 @@ class ProviderTransferencias extends ChangeNotifier {
     isLoading == false;
     lastUpdate = DateTime.now();
     debugPrint('se refresco el provider');
+    await registrarUbicacion();
     notifyListeners();
   }
-
-
 
 //TODO: devolver un either con mensaje de error
   Future<void> initialLoad() async {
@@ -101,7 +90,14 @@ class ProviderTransferencias extends ChangeNotifier {
     await getPharmaList();
     await fetchTransferenciasActivas();
     await fetchTransferenciasTerminadas();
+    await fetchUsersLocation();
+    await registrarUbicacion();
     isLoading == false;
+  }
+
+  Future<void> fetchUsersLocation() async {
+    _usersLocationList = await _locationService.fetchUsersLocation();
+    notifyListeners();
   }
 
   Future<void> fetchTransferenciasActivas() async {
@@ -215,4 +211,37 @@ class ProviderTransferencias extends ChangeNotifier {
     }
     return farmasParaRecoger;
   }
+
+  Future<Either<String, bool>> registrarUbicacion() async {
+    final status = await Geolocator.checkPermission();
+
+    if (status == LocationPermission.whileInUse ||
+        status == LocationPermission.always) {
+      try {
+        final location = await Geolocator.getCurrentPosition();
+
+        final userLocation = UserLocation(
+            dateTime: DateTime.now(),
+            userEmail: currentUser!.usersEmail,
+            userName: currentUser?.usersNombre ?? '',
+            latitud: location.latitude,
+            longitud: location.longitude);
+        final response = await _locationService.pushUserLocation(userLocation);
+        return Right(response);
+      } catch (e) {
+        debugPrint('No se pudo leer la ubicación del dispositivo exception $e');
+        return const Left('No se pudo leer la ubicación del dispositivo');
+      }
+    } else {
+      return const Left('Sin permiso de ubicación');
+    }
+  }
+
+  Future<Either<String, bool>> updateTransfEntrega(
+          Transferencia transferencia) =>
+      transfService.updateTransfEntrega(transferencia, currentUser!);
+
+       Future<Either<String, bool>> updateTransfRetiro(
+          Transferencia transferencia) =>
+      transfService.updateTransfRetiro(transferencia, currentUser!);
 }

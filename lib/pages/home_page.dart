@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pharma_transfer/models/user_model.dart';
+import 'package:pharma_transfer/pages/users_location_page.dart';
 import 'package:provider/provider.dart';
 
 import 'package:pharma_transfer/controller/google_sign_in_services.dart';
@@ -79,6 +81,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final provider =
         Provider.of<ProviderTransferencias>(context, listen: false);
+    final isAdmin =
+        (provider.currentUser?.userCargo == UserCargo.administrador);
     final scaffoldKey = GlobalKey<ScaffoldState>();
     final DateTime lastUpdate = provider.lastUpdate;
     if (accountGoogle == null && kallowGuestMode == false) {
@@ -89,6 +93,7 @@ class _HomePageState extends State<HomePage> {
       return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
           key: scaffoldKey,
           appBar: _buildAppBar(lastUpdate),
           drawer: CustomDrawer(
@@ -98,13 +103,14 @@ class _HomePageState extends State<HomePage> {
           body: Container(
             width: double.infinity,
             height: double.infinity,
-            color: const Color(0xFFE7E7E7),
+            // color: const Color(0xFFE7E7E7),
             child: PageView(
               controller: controller,
               children: [
                 const TransfPage(),
                 const PharmaPage(),
-                DoneTransfPage(searchString: searchString)
+                DoneTransfPage(searchString: searchString),
+                if (isAdmin) const UsersLocationPage()
               ],
             ),
           ),
@@ -138,13 +144,7 @@ class _HomePageState extends State<HomePage> {
   AppBar _buildAppBar(DateTime lastUpdate) {
     return AppBar(
       elevation: 24,
-      // iconTheme: const IconThemeData(color: Colors.white),
-      // iconTheme: Theme.of(context).primaryColorDark,
-      flexibleSpace: Container(
-          // color: Theme.of(context).primaryColor.withOpacity(0.4),
-          // color: Theme.of(context).primaryColorDark.withOpacity(0.4),
-          // color: Theme.of(context).colorScheme.primaryContainer
-          ),
+      flexibleSpace: Container(),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -172,6 +172,7 @@ class _HomePageState extends State<HomePage> {
 
   FloatingActionButton _floatButton() {
     return FloatingActionButton(
+      heroTag: 'homeFloat',
       child: const Icon(Icons.add_a_photo, color: Colors.black87),
       onPressed: () async {
         await getImageAndProcess(ImageSource.camera);

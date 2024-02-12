@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pharma_transfer/models/pharma_model.dart';
 
-const double kCardElevation = 0;
+const double kCardElevation = 2;
 
 class PharmaCard extends StatelessWidget {
   const PharmaCard(
@@ -29,12 +29,13 @@ class PharmaCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Card(
+        
         margin: EdgeInsets.zero,
         elevation: kCardElevation,
-        shape: RoundedRectangleBorder(
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-          side: BorderSide(color: Theme.of(context).colorScheme.outline),
-        ),
+        // shape: RoundedRectangleBorder(
+        //   borderRadius: const BorderRadius.all(Radius.circular(12)),
+        //   side: BorderSide(color: Theme.of(context).colorScheme.outline),
+        // ),
         shadowColor: null,
         child: Padding(
           padding: const EdgeInsets.all(4.0),

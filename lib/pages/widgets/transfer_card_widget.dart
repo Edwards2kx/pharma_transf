@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pharma_transfer/controller/provider_transferencias.dart';
@@ -17,6 +19,19 @@ class TransferCard extends StatefulWidget {
 }
 
 class TransferCardState extends State<TransferCard> {
+  Color colorByStatus() =>
+      widget.transferencia.estado == EstadoTransferencia.pendiente
+          ? Colors.red
+          : widget.transferencia.estado == EstadoTransferencia.recogido
+              ? Colors.yellow
+              : Colors.green;
+
+  // Color colorByStatus(EstadoTransferencia estado) {
+  //   if (estado == EstadoTransferencia.pendiente) return Colors.red;
+  //   if (estado == EstadoTransferencia.recogido) return Colors.yellow;
+  //   return Colors.green;
+  // }
+
   @override
   Widget build(BuildContext context) {
     Transferencia transferencia = widget.transferencia;
@@ -106,14 +121,13 @@ class TransferCardState extends State<TransferCard> {
                     },
                     child: Text(accion),
                   ),
-                Expanded(
-                  child: Container(),
-                ),
+                Expanded(child: Container()),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text('Estado:   $estado    '),
-                    Icon(Icons.circle, color: color)
+                    // Icon(Icons.circle, color: color)
+                    Icon(Icons.circle, color: colorByStatus())
                   ],
                 ),
               ],
@@ -127,16 +141,12 @@ class TransferCardState extends State<TransferCard> {
   Future<void> _changeTransfState(Transferencia transferencia) async {
     final provider =
         Provider.of<ProviderTransferencias>(context, listen: false);
-    final user = provider.currentUser;
-
-    // var _estadoTransferencia = transferencia.estadoTransferencia();
     var estadoTransferencia = transferencia.estado;
     showDialog(
         context: context,
         builder: (_) {
           return AlertDialog(
             title: const Text('Cambiar estado'),
-            // title: const Text('¿Quieres cambiar el estado de la transferencia?'),
             content:
                 const Text('¿Quieres cambiar el estado de la transferencia?'),
             actions: [
@@ -147,23 +157,17 @@ class TransferCardState extends State<TransferCard> {
               const SizedBox(width: 8),
               FilledButton.tonal(
                   onPressed: () async {
+                    context.loaderOverlay.show();
+                    //TODO: visualizar los errores en las vistas
                     if (estadoTransferencia == EstadoTransferencia.pendiente) {
-                      context.loaderOverlay.show();
-                      await updateTransfRetiro(transferencia, user!.usersEmail);
-                      // context.loaderOverlay.hide();
+                      await provider.updateTransfRetiro(transferencia);
                     }
-
                     if (estadoTransferencia == EstadoTransferencia.recogido) {
-                      context.loaderOverlay.show();
-                      await updateTransfEntrega(
-                          transferencia, user!.usersEmail);
-                      // context.loaderOverlay.hide();
+                      await provider.updateTransfEntrega(transferencia);
                     }
-                    await provider.updateTransferencias();
+                    await provider.fetchTransferenciasActivas();
                     context.loaderOverlay.hide();
-
                     Navigator.pop(context);
-                    setState(() {}); //TODO: provar remover
                   },
                   child: const Text('Si')),
             ],
@@ -171,3 +175,21 @@ class TransferCardState extends State<TransferCard> {
         });
   }
 }
+
+//   if (estadoTransferencia == EstadoTransferencia.pendiente) {
+                  //     context.loaderOverlay.show();
+                  //     await updateTransfRetiro(transferencia, user!.usersEmail);
+                  //     // context.loaderOverlay.hide();
+                  //   }
+
+                  //   if (estadoTransferencia == EstadoTransferencia.recogido) {
+                  //     context.loaderOverlay.show();
+                  //     await updateTransfEntrega(
+                  //         transferencia, user!.usersEmail);
+                  //     // context.loaderOverlay.hide();
+                  //   }
+                  //   await provider.updateTransferencias();
+                  //   context.loaderOverlay.hide();
+
+                  //   Navigator.pop(context);
+                  //   setState(() {}); //TOD

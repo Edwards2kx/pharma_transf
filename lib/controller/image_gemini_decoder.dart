@@ -9,7 +9,7 @@ import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
 import 'package:string_similarity/string_similarity.dart';
 
-const bool kUsePharmaNameValidator = false;
+const bool kUsePharmaNameValidator = true;
 
 class ImageGeminiDecoder {
   static Future<Either<String, Recibo>> procesarImagen(

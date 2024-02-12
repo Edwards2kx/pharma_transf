@@ -7,8 +7,12 @@ class LoadingOverlayWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Lottie.asset('assets/loading_animation.json',
+      child: Lottie.asset('assets/loading_pills.json',
           width: MediaQuery.of(context).size.width * 0.5),
     );
+    // return Center(
+    //   child: Lottie.asset('assets/loading_animation.json',
+    //       width: MediaQuery.of(context).size.width * 0.5),
+    // );
   }
 }

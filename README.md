@@ -83,8 +83,16 @@ AGREGAR ACCION DE CONSULTAR UBICACION MOTORIZADO
  modificar drawer remover info innecesaria
  instalar shorebird
  agregar vista de mapas
- 
+
+
+ ubicacion 
+ y acyualizacion farmacia
+
+ probar endpoint de guardar ubicación, 
+ probar endpoint de actualizar ubicación de farmacia
 
 
 
-
+lottie files
+borjalottie@yopmail.com
+RRdFd5dSk3XxaPB

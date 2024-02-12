@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pharma_transfer/controller/provider_transferencias.dart';
 import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
@@ -75,7 +76,9 @@ class ResultSheetWidget extends StatelessWidget {
                   child: Text('Se presentó un error, intenta nuevamente'),
                 );
               }
-              return const Center(child: CircularProgressIndicator());
+              // return const Center(child: CircularProgressIndicator());
+              return Lottie.asset('assets/scanning text.json',
+          width: MediaQuery.of(context).size.width * 0.6);
             },
           )
         ],

@@ -67,7 +67,7 @@ class TransfService {
     return transfList;
   }
 
-   Future<Either<String, bool>> updateTransfRetiro(
+  Future<Either<String, bool>> updateTransfRetiro(
       Transferencia transferencia, User user) async {
     if (user.usersEstado != '1') {
       debugPrint('usuario invalido');
@@ -83,7 +83,7 @@ class TransfService {
 
     try {
       if (resp.statusCode == 200) {
-        debugPrint('resultado de estatus = 200 ${resp.body}');
+        // debugPrint('resultado de estatus = 200 ${resp.body}');
         if (resp.body == "No Registrado") return const Right(false);
         return const Right(true);
       } else {
@@ -94,6 +94,40 @@ class TransfService {
     } catch (e) {
       debugPrint('error en updateTransfRetiro $e');
       return const Left('Ocurrio un error, intenta nuevamente');
+    }
+  }
+
+  Future<Either<String, bool>> updateTransfEntrega(
+      Transferencia transferencia, User user) async {
+    if (user.usersEstado != '1') {
+      debugPrint('usuario invalido');
+      return const Left('No puedes realizar está acción');
+    }
+
+    var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
+
+    debugPrint('voy a actualizar');
+
+    final resp = await http.post(url, body: {
+      "database": "admin_Smart",
+      "accion": "farmaUpdateEnt",
+      "transId": transferencia.transfId,
+      "farmaUserEntrega": user.usersEmail,
+    });
+
+    try {
+      if (resp.statusCode == 200) {
+        // debugPrint('resultado de estatus = 200 ${resp.body}');
+        if (resp.body == "No Registrado") return const Right(false);
+        return const Right(true);
+      } else {
+        debugPrint(
+            'error en la comunicacion con el servidor ${resp.body} ${resp.body.length}');
+        return const Left('Error en la comunicación con el servidor');
+      }
+    } catch (e) {
+      debugPrint('error en updateTransfEntrega $e');
+      return const Left('Error en la comunicación con el servidor');
     }
   }
 }
