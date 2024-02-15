@@ -4,7 +4,7 @@ class AppTheme {
   ThemeData getTheme() {
     return ThemeData(
       // colorSchemeSeed: Colors.blue,
-      colorSchemeSeed: Colors.yellow,
+      colorSchemeSeed: Colors.blue,
       useMaterial3: true,
       // scaffoldBackgroundColor: Colors.white
     );

@@ -2,13 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
-import 'package:pharma_transfer/controller/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
-import 'package:pharma_transfer/pages/widgets/recibo_resumen_widget.dart';
 import 'package:pharma_transfer/utils/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
-//TODO: convertir a stateless widget
+const TextStyle textStyleValue = TextStyle(
+    fontSize: 16.0, color: Colors.black87, fontWeight: FontWeight.w500);
+
+const TextStyle textStyleLabel = TextStyle(
+    fontSize: 14.0, color: Colors.black54, fontWeight: FontWeight.w300);
+
+
 class TransferCard extends StatefulWidget {
   final Transferencia transferencia;
 
@@ -158,15 +163,16 @@ class TransferCardState extends State<TransferCard> {
               FilledButton.tonal(
                   onPressed: () async {
                     context.loaderOverlay.show();
+
                     if (estadoTransferencia == EstadoTransferencia.pendiente) {
                       final result =
                           await provider.updateTransfRetiro(transferencia);
                       if (result.isLeft) {
-                        final snackMessage = customSnackBar(result.left);
+                        final snackMessage = customSnackBar(context, message: result.left);
                         ScaffoldMessenger.of(context)
                             .showSnackBar(snackMessage);
                       } else {
-                        final snackMessage = customSnackBar(
+                        final snackMessage = customSnackBar(context, message:
                             "Se realizó la acción correctamente");
                         ScaffoldMessenger.of(context)
                             .showSnackBar(snackMessage);
@@ -177,11 +183,11 @@ class TransferCardState extends State<TransferCard> {
                       final result =
                           await provider.updateTransfEntrega(transferencia);
                       if (result.isLeft) {
-                        final snackMessage = customSnackBar(result.left);
+                        final snackMessage = customSnackBar(context, message: result.left);
                         ScaffoldMessenger.of(context)
                             .showSnackBar(snackMessage);
                       } else {
-                        final snackMessage = customSnackBar(
+                        final snackMessage = customSnackBar(context, message: 
                             "Se realizó la acción correctamente");
                         ScaffoldMessenger.of(context)
                             .showSnackBar(snackMessage);
@@ -197,21 +203,3 @@ class TransferCardState extends State<TransferCard> {
         });
   }
 }
-
-//   if (estadoTransferencia == EstadoTransferencia.pendiente) {
-                  //     context.loaderOverlay.show();
-                  //     await updateTransfRetiro(transferencia, user!.usersEmail);
-                  //     // context.loaderOverlay.hide();
-                  //   }
-
-                  //   if (estadoTransferencia == EstadoTransferencia.recogido) {
-                  //     context.loaderOverlay.show();
-                  //     await updateTransfEntrega(
-                  //         transferencia, user!.usersEmail);
-                  //     // context.loaderOverlay.hide();
-                  //   }
-                  //   await provider.updateTransferencias();
-                  //   context.loaderOverlay.hide();
-
-                  //   Navigator.pop(context);
-                  //   setState(() {}); //TOD

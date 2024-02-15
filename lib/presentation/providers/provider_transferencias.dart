@@ -13,7 +13,7 @@ import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
 import 'package:pharma_transfer/models/user_location_model.dart';
 import 'package:pharma_transfer/models/user_model.dart';
-import 'google_sign_in_services.dart';
+import '../../controller/google_sign_in_services.dart';
 
 class ProviderTransferencias extends ChangeNotifier {
   final UserLocationService _locationService = UserLocationService();
@@ -74,22 +74,22 @@ class ProviderTransferencias extends ChangeNotifier {
     }).toList();
   }
 
-  @Deprecated(
-      'reemplazado por fetchTransferenciasActivas y fetchTransferenciasTerminadas')
-  Future<void> updateTransferencias() async {
-    if (isLoading) return;
-    isLoading == true;
-    // if (firstBoot == false) firstBoot = true;
-    _transferenciasActivas = await getActiveTransferList();
-    _pharmaList = await getPharmaFromServer(); // remover
-    await getCurrentUser();
-    await nearPharma();
-    isLoading == false;
-    lastUpdate = DateTime.now();
-    debugPrint('se refresco el provider');
-    await registrarUbicacion();
-    notifyListeners();
-  }
+  // @Deprecated(
+  //     'reemplazado por fetchTransferenciasActivas y fetchTransferenciasTerminadas')
+  // Future<void> updateTransferencias() async {
+  //   if (isLoading) return;
+  //   isLoading == true;
+  //   // if (firstBoot == false) firstBoot = true;
+  //   _transferenciasActivas = await getActiveTransferList();
+  //   _pharmaList = await getPharmaFromServer(); // remover
+  //   await getCurrentUser();
+  //   await nearPharma();
+  //   isLoading == false;
+  //   lastUpdate = DateTime.now();
+  //   debugPrint('se refresco el provider');
+  //   await registrarUbicacion();
+  //   notifyListeners();
+  // }
 
 //TODO: devolver un either con mensaje de error
   Future<void> initialLoad() async {

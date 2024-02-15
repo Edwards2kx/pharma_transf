@@ -7,9 +7,9 @@ const TextStyle textStyleValue = TextStyle(
 const TextStyle textStyleLabel = TextStyle(
     fontSize: 14.0, color: Colors.black54, fontWeight: FontWeight.w300);
 
-class ReciboResumenReduce extends StatelessWidget {
+class ReciboResumenWidget extends StatelessWidget {
   final Recibo recibo;
-  const ReciboResumenReduce({super.key, required this.recibo});
+  const ReciboResumenWidget({super.key, required this.recibo});
 
   @override
   Widget build(BuildContext context) {

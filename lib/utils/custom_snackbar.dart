@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-SnackBar customSnackBar(String message) {
+//TODO: agregar alguna animacion
+SnackBar customSnackBar(BuildContext context, {required String message}) {
   return SnackBar(
     behavior: SnackBarBehavior.floating,
-    backgroundColor: Colors.black87,
+    backgroundColor: Theme.of(context).colorScheme.primary,
     padding: const EdgeInsets.all(16),
-    content: Text(message,),
+    content: Text(message),
   );
 }

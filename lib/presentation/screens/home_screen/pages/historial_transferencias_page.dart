@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:pharma_transfer/controller/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
-import 'package:pharma_transfer/pages/widgets/transfer_card_widget.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/widgets/transfer_card_widget.dart';
 import 'package:provider/provider.dart';
 
-class DoneTransfPage extends StatefulWidget {
+class HistorialTansferenciasPage extends StatefulWidget {
   final String searchString;
 
-  const DoneTransfPage({Key? key, required this.searchString})
+  const HistorialTansferenciasPage({Key? key, required this.searchString})
       : super(key: key);
   @override
-  DoneTransfPageState createState() => DoneTransfPageState();
+  HistorialTansferenciasPageState createState() => HistorialTansferenciasPageState();
 }
 
-class DoneTransfPageState extends State<DoneTransfPage> {
+class HistorialTansferenciasPageState extends State<HistorialTansferenciasPage> {
   String searchString = '';
   TextEditingController searchBoxController = TextEditingController();
   @override

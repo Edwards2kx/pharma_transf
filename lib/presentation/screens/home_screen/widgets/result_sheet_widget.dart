@@ -4,12 +4,11 @@ import 'dart:typed_data';
 
 import 'package:either_dart/either.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:pharma_transfer/controller/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
 import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
-import 'package:pharma_transfer/pages/widgets/recibo_resumen_reduce_widget.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/widgets/recibo_resumen_widget.dart';
 import 'package:pharma_transfer/utils/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
@@ -64,7 +63,7 @@ class ResultSheetWidget extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ReciboResumenReduce(recibo: response.right),
+                ReciboResumenWidget(recibo: response.right),
                 Align(
                   alignment: Alignment.center,
                   child: FilledButton(
@@ -91,7 +90,7 @@ class ResultSheetWidget extends StatelessWidget {
           );
         }
         // return const Center(child: CircularProgressIndicator());
-        return Lottie.asset('assets/scanning text.json',
+        return Lottie.asset('assets/scanning_text.json',
             width: MediaQuery.of(context).size.width * 0.6);
       },
     );
@@ -132,7 +131,7 @@ Future<void> _showConfirmation(BuildContext context, Recibo recibo) async {
                     : 'Se presento un error, intenta nuevamente';
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 ScaffoldMessenger.of(context)
-                    .showSnackBar(customSnackBar(message));
+                    .showSnackBar(customSnackBar(context, message:message));
                 context
                     .read<ProviderTransferencias>()
                     .fetchTransferenciasActivas();

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pharma_transfer/controller/transf_service.dart';
 import 'package:pharma_transfer/models/user_model.dart';

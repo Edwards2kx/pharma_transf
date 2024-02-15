@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:pharma_transfer/controller/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
 import 'package:pharma_transfer/models/pharma_model.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
-import 'package:pharma_transfer/pages/widgets/transfer_card_widget.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/widgets/transfer_card_widget.dart';
 import 'package:provider/provider.dart';
 
-class TransfPage extends StatefulWidget {
-  const TransfPage({super.key});
+class TransferenciasPage extends StatefulWidget {
+  const TransferenciasPage({super.key});
   @override
-  TransfPageState createState() => TransfPageState();
+  TransferenciasPageState createState() => TransferenciasPageState();
 }
 
-class TransfPageState extends State<TransfPage> {
+class TransferenciasPageState extends State<TransferenciasPage> {
   bool onlyNearPharma = false;
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,6 @@ class TransfPageState extends State<TransfPage> {
     final currentPharma = provider.currentPharma;
 
     return RefreshIndicator(
-      // onRefresh: provider.updateTransferencias,
       onRefresh: provider.fetchTransferenciasActivas,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -116,7 +115,6 @@ class TransfPageState extends State<TransfPage> {
       );
     }
 
-    //lo que se devuelve en realidad
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -124,10 +122,6 @@ class TransfPageState extends State<TransfPage> {
         if (tempListDelivery.isNotEmpty) groupDelivery(),
       ],
     );
-
-    // return Container(
-    //   child: Text('Esta activo lo de la cercania'),
-    // );
   }
 
   Widget buildFullTransferList(

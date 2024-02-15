@@ -6,9 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pharma_transfer/controller/google_sign_in_services.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:pharma_transfer/controller/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/home_page.dart';
 import 'package:provider/provider.dart';
-import 'Home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -57,12 +57,20 @@ class _LoginPageState extends State<LoginPage> {
           image: DecorationImage(
               fit: BoxFit.cover,
               image: AssetImage('assets/background_pattern_pharma.jpg'),
-              colorFilter: ColorFilter.mode(Colors.blue, BlendMode.modulate))),
+              colorFilter: ColorFilter.mode(Colors.blueAccent, BlendMode.modulate))),
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Text(
+              'PharmaTransf',
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge
+                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 0),
+            ),
+            const SizedBox(height: 128),
             MaterialButton(
               onPressed: () async {
                 var account = await GoogleSignInService.signInWithGoogle();

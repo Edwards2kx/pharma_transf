@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pharma_transfer/controller/provider_transferencias.dart';
-import 'package:pharma_transfer/pages/users_location_map_screen.dart';
+import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/screens/map_screen/mapa_ubicaciones_usuarios_screen.dart';
 import 'package:pharma_transfer/utils/utils.dart';
 import 'package:provider/provider.dart';
 
-class UsersLocationPage extends StatelessWidget {
-  const UsersLocationPage({super.key});
+class UbicacionesUsuariosPage extends StatelessWidget {
+  const UbicacionesUsuariosPage({super.key});
 
   @override
   Widget build(BuildContext context) {

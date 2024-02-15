@@ -107,4 +107,8 @@ añadir en el mapa, opcion de buscar? o tap para ver información como un tool b
 invertir el orden de llegada de las transferencias del historial o ver como organizarlas
 
 
+cambiar el icono de la app
+
+flutter pub run flutter_launcher_icons
+
 

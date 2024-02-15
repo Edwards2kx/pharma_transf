@@ -1,26 +1,25 @@
 import 'dart:typed_data';
 
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/pages/farmacias_page.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/pages/historial_transferencias_page.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/pages/transferencias_page.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/pages/ubicaciones_usuarios_page.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/widgets/drawer_widget.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/widgets/image_cropper_widget.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/widgets/result_sheet_widget.dart';
+import 'package:pharma_transfer/presentation/screens/login_screen/login_page.dart';
+import 'package:provider/provider.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pharma_transfer/models/user_model.dart';
-import 'package:pharma_transfer/pages/users_location_page.dart';
-import 'package:provider/provider.dart';
-
 import 'package:pharma_transfer/controller/google_sign_in_services.dart';
-import 'package:pharma_transfer/controller/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
 import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
-import 'package:pharma_transfer/pages/done_transfer_page.dart';
-import 'package:pharma_transfer/pages/pharma_page.dart';
-import 'package:pharma_transfer/pages/transf_page.dart';
-import 'package:pharma_transfer/pages/widgets/drawer_widget.dart';
-import 'package:pharma_transfer/pages/widgets/image_cropper.dart';
-import 'package:pharma_transfer/pages/widgets/result_sheet_widget.dart';
 
-import 'login_page.dart';
 
 const bool kUseCropper = true;
 const bool kallowGuestMode = false;
@@ -108,10 +107,10 @@ class _HomePageState extends State<HomePage> {
             child: PageView(
               controller: controller,
               children: [
-                const TransfPage(),
+                const TransferenciasPage(),
                 const PharmaPage(),
-                DoneTransfPage(searchString: searchString),
-                if (isAdmin) const UsersLocationPage()
+                HistorialTansferenciasPage(searchString: searchString),
+                if (isAdmin) const UbicacionesUsuariosPage()
               ],
             ),
           ),
@@ -206,7 +205,7 @@ class _HomePageState extends State<HomePage> {
     return await Navigator.push<Uint8List>(
       context,
       MaterialPageRoute(
-        builder: (_) => CropperWidget(
+        builder: (_) => ImageCropperWidget(
           title: 'Recorta y endereza la imagen',
           imagePath: imagePath,
         ),

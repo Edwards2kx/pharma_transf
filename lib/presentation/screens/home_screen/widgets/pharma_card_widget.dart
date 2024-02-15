@@ -4,8 +4,8 @@ import 'package:pharma_transfer/models/pharma_model.dart';
 
 const double kCardElevation = 2;
 
-class PharmaCard extends StatelessWidget {
-  const PharmaCard(
+class PharmaCardWidget extends StatelessWidget {
+  const PharmaCardWidget(
       {super.key, this.userLatitud, this.userLongitud, required this.farmacia});
   final double? userLatitud;
   final double? userLongitud;

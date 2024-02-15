@@ -6,18 +6,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CropperWidget extends StatefulWidget {
+class ImageCropperWidget extends StatefulWidget {
   final String imagePath;
 
   final String title;
-  const CropperWidget({Key? key, required this.title, required this.imagePath})
+  const ImageCropperWidget({Key? key, required this.title, required this.imagePath})
       : super(key: key);
 
   @override
-  CropperWidgetState createState() => CropperWidgetState();
+  ImageCropperWidgetState createState() => ImageCropperWidgetState();
 }
 
-class CropperWidgetState extends State<CropperWidget> {
+class ImageCropperWidgetState extends State<ImageCropperWidget> {
   late CustomImageCropController controller;
 
   final CustomCropShape _currentShape = CustomCropShape.Ratio;

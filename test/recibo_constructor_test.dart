@@ -1,6 +1,7 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:pharma_transfer/controller/server_comunication.dart';
 
 void main() {
   test('Recibo constructor from map', () async {
@@ -19,16 +20,7 @@ void main() {
     print(geminiResponse);
   });
 
-  test('getAlternateTransferList', () async {
-    final listaActiva = await getActiveTransferList();
-    print(listaActiva.length);
 
-    // final listaAlternativa = await getAlternateTransferList();
-    // print(listaAlternativa.length);
-
-    final user = await getUserWithEmail('emoticsas@gmail.com');
-    print(user);
-  });
 }
 
 

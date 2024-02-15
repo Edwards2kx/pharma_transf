@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pharma_transfer/controller/provider_transferencias.dart';
+import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
 import 'package:pharma_transfer/models/pharma_model.dart';
-import 'package:pharma_transfer/pages/widgets/pharma_card.dart';
+import 'package:pharma_transfer/presentation/screens/home_screen/widgets/pharma_card_widget.dart';
 import 'package:provider/provider.dart';
 
 //const double kDistanceMin = 5.0; //5 km distancia minima
@@ -39,7 +39,7 @@ class PharmaPageState extends State<PharmaPage> {
                   ),
                   const SizedBox(height: 8.0),
                   ...farmasToDelivery.map(
-                    (f) => PharmaCard(
+                    (f) => PharmaCardWidget(
                         farmacia: f,
                         userLatitud: userLongitud,
                         userLongitud: userLatitud),
@@ -59,7 +59,7 @@ class PharmaPageState extends State<PharmaPage> {
                 ),
                 const SizedBox(height: 8.0),
                 ...farmasToPickUp.map(
-                  (f) => PharmaCard(
+                  (f) => PharmaCardWidget(
                     farmacia: f,
                     userLatitud: userLongitud,
                     userLongitud: userLatitud,
@@ -74,25 +74,3 @@ class PharmaPageState extends State<PharmaPage> {
     );
   }
 }
-
-// ListView.builder(
-//   itemCount: farmasToPickUp.length,
-//   itemBuilder: (BuildContext context, int index) {
-//     return PharmaCard(
-//       farmacia: farmasToPickUp[index],
-//       userLatitud: userLatitud,
-//       userLongitud: userLongitud,
-//     );
-//   },
-// ),
-
-// ListView.builder(
-//   itemCount: farmasToDelivery.length,
-//   itemBuilder: (BuildContext context, int index) {
-//     return PharmaCard(
-//       farmacia: farmasToDelivery[index],
-//       userLatitud: userLatitud,
-//       userLongitud: userLongitud,
-//     );
-//   },
-// ),
