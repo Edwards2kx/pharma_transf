@@ -59,7 +59,6 @@ Future<List<UserLocation>> _fetchUsersLocation() async {
       debugPrint('error no se registro la ubicacion del usuario ${resp.body}');
       return [];
     }
-    print('user locations ${resp.body}'); //remover
     return userLocationFromJson(resp.body);
   } catch (e) {
     debugPrint('excepcion durante _fetchUsersLocation $e');

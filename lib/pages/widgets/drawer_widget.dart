@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pharma_transfer/controller/google_sign_in_services.dart';
+import 'package:pharma_transfer/controller/provider_transferencias.dart';
+import 'package:pharma_transfer/models/user_model.dart';
 import 'package:pharma_transfer/pages/login_page.dart';
+import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatefulWidget {
   final PageController controller;
-  final GoogleSignInAccount? accountGoogle;
+  // final GoogleSignInAccount? accountGoogle;
   final GlobalKey<ScaffoldState> scaffoldKey;
   const CustomDrawer(
       {super.key,
       required this.controller,
-      this.accountGoogle,
+      // this.accountGoogle,
       required this.scaffoldKey});
 
   @override
@@ -23,6 +26,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final usuario = context.read<ProviderTransferencias>().currentUser;
     return NavigationDrawer(
         selectedIndex: navDrawerIndex,
         onDestinationSelected: (value) {
@@ -33,34 +37,54 @@ class _CustomDrawerState extends State<CustomDrawer> {
           widget.scaffoldKey.currentState?.closeDrawer();
         },
         children: [
-          UserAccountsDrawerHeader(
-              // arrowColor: Colors.red,
-
-              currentAccountPicture: CircleAvatar(
-                backgroundImage: widget.accountGoogle?.photoUrl != null
-                    ? NetworkImage(widget.accountGoogle!.photoUrl!)
-                    : null,
-              ),
-              accountName: Text(
-                '${widget.accountGoogle?.displayName}',
-                style: const TextStyle(fontSize: 22.0),
-              ),
-              accountEmail: Text('${widget.accountGoogle?.email}',
-                  style: const TextStyle(fontSize: 18.0))),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.supervised_user_circle_outlined,
+                  size: 36,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(usuario!.usersNombre),
+                    Text(usuario.usersEmail),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Divider(indent: 16, endIndent: 16),
           const NavigationDrawerDestination(
-              icon: Icon(Icons.add), label: Text('Transferencias')),
+            icon: Icon(Icons.receipt_outlined),
+            label: Text('Transferencias'),
+          ),
           const NavigationDrawerDestination(
-              icon: Icon(Icons.add), label: Text('Farmacias')),
+              icon: Icon(Icons.local_pharmacy_outlined),
+              label: Text('Farmacias')),
           const NavigationDrawerDestination(
-              icon: Icon(Icons.add), label: Text('Historial')),
-          
-          ListTile(
-            title: const Text('Cerrar sesión'),
-            onTap: () {
-              GoogleSignInService.signOut()
-                  .then((_) => context.go(LoginPage.route));
-            },
-            trailing: const Icon(Icons.logout, color: Colors.red),
+            icon: Icon(Icons.history_outlined),
+            label: Text('Historial'),
+          ),
+          if (usuario.userCargo == UserCargo.administrador)
+            const NavigationDrawerDestination(
+              icon: Icon(Icons.location_on_outlined),
+              label: Text('Ubicaciones'),
+            ),
+          const Divider(indent: 16, endIndent: 16),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: OutlinedButton.icon(
+                onPressed: () {
+                  GoogleSignInService.signOut().then(
+                    (_) => context.go(LoginPage.route),
+                  );
+                },
+                icon: const Icon(Icons.logout),
+                label: const Text('Cerrar sesión')),
           ),
         ]);
   }

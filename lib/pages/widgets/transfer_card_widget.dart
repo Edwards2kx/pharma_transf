@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pharma_transfer/controller/provider_transferencias.dart';
-import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
 import 'package:pharma_transfer/pages/widgets/recibo_resumen_widget.dart';
+import 'package:pharma_transfer/utils/custom_snackbar.dart';
 import 'package:provider/provider.dart';
 
 //TODO: convertir a stateless widget
@@ -158,12 +158,34 @@ class TransferCardState extends State<TransferCard> {
               FilledButton.tonal(
                   onPressed: () async {
                     context.loaderOverlay.show();
-                    //TODO: visualizar los errores en las vistas
                     if (estadoTransferencia == EstadoTransferencia.pendiente) {
-                      await provider.updateTransfRetiro(transferencia);
+                      final result =
+                          await provider.updateTransfRetiro(transferencia);
+                      if (result.isLeft) {
+                        final snackMessage = customSnackBar(result.left);
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(snackMessage);
+                      } else {
+                        final snackMessage = customSnackBar(
+                            "Se realizó la acción correctamente");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(snackMessage);
+                      }
+                      // ScaffoldMessenger.of(context).showSnackBar(customSnackBar())
                     }
                     if (estadoTransferencia == EstadoTransferencia.recogido) {
-                      await provider.updateTransfEntrega(transferencia);
+                      final result =
+                          await provider.updateTransfEntrega(transferencia);
+                      if (result.isLeft) {
+                        final snackMessage = customSnackBar(result.left);
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(snackMessage);
+                      } else {
+                        final snackMessage = customSnackBar(
+                            "Se realizó la acción correctamente");
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(snackMessage);
+                      }
                     }
                     await provider.fetchTransferenciasActivas();
                     context.loaderOverlay.hide();

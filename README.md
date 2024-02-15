@@ -96,3 +96,15 @@ AGREGAR ACCION DE CONSULTAR UBICACION MOTORIZADO
 lottie files
 borjalottie@yopmail.com
 RRdFd5dSk3XxaPB
+
+cambiar barra del drawer DONE
+cambiar icono app IN PROGRESS
+cambiar nombre de la app
+
+filtrar vista mapa por un solo usuario
+añadir en el mapa, opcion de buscar? o tap para ver información como un tool bar
+
+invertir el orden de llegada de las transferencias del historial o ver como organizarlas
+
+
+

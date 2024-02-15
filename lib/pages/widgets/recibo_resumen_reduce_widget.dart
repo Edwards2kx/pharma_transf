@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
 
 const TextStyle textStyleValue = TextStyle(
@@ -39,56 +38,10 @@ class ReciboResumenReduce extends StatelessWidget {
                   .map((e) => Text(
                       'Producto ${e.nombre} \n Ent: ${e.ent} Frac: ${e.frac}'))
                   .toList(),
-              // Align(
-              //   alignment: Alignment.center,
-              //   child: FilledButton(
-              //       onPressed: () async {
-              //         await _showConfirmation(context);
-              //       },
-              //       child: const Padding(
-              //         padding: EdgeInsets.all(8.0),
-              //         child: Text('Registrar Información'),
-              //       )),
-              // )
             ],
           ),
         ),
       ),
     );
   }
-
-//   Future<void> _showConfirmation(BuildContext context) async {
-//     await showDialog(
-//         context: context,
-//         builder: (_) {
-//           final contenido =
-//               "Fecha: ${recibo.fecha}\nNoTransferencia: ${recibo.numeroTransferencia}\nusuSoliTransf: ${recibo.usuSoliTransf}\nfarSoliTransf: ${recibo.farSoliTransf}\nusuAutoTransf: ${recibo.usuAutoTransf}\nfarAutoTransf: ${recibo.farAutoTransf}";
-//           return AlertDialog(
-//               title: const Center(child: Text('Registro')),
-//               content: Text(
-//                   '¿Deseas registar la información como aparece en el resumen?\n\n$contenido'),
-//               // backgroundColor: Colors.grey.shade100,
-//               actions: [
-//                 TextButton(
-//                   child: const Text('No'),
-//                   onPressed: () => Navigator.pop(context),
-//                 ),
-//                 FilledButton(
-//                   child: const Text('Si'),
-//                   onPressed: () async {
-//                     final response = await pushTransferencia(recibo);
-// //TODO: mejorar este snackbar
-//                     final snackBar = SnackBar(
-//                       content: Text(response
-//                           ? 'Registro exitoso'
-//                           : 'Se presento un error, intenta nuevamente'),
-//                     );
-//                     Navigator.pop(context);
-//                     Navigator.pop(context);
-//                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-//                   },
-//                 ),
-//               ]);
-//         });
-//   }
 }

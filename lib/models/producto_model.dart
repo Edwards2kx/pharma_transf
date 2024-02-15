@@ -18,8 +18,11 @@ class Producto {
   }
 
   factory Producto.fromMap(Map<String, dynamic> map) {
+    var nombre = map['nombre'] as String;
+    nombre = nombre.replaceAll("'","*");
     return Producto(
-      nombre: map['nombre'] as String,
+      // nombre: map['nombre'] as String,
+      nombre : nombre, 
       ent: map['ent'] as int,
       frac: map['frac'] as int,
     );

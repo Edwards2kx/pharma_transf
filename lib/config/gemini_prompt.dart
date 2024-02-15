@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_string_escapes
+
 const String kPromptDecodeTicket = '''
 En la imagen puede haber un recibo, la imagen podria estar rotada, requiero como respuesta un objeto JSON con la siguiente información:
 

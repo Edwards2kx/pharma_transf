@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_string_escapes
+
 const String kPythonPromptDecodeTicket = '''
 
 En la imagen puede haber un recibo, la imagen podria estar rotada, rotala digitalmente para que el texto de forma completamente horizontal, dame una respuesta en forma de JSON, no inferir o incluir valores no presentes en la imagen

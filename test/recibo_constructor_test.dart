@@ -5,18 +5,18 @@ import 'package:pharma_transfer/controller/server_comunication.dart';
 void main() {
   test('Recibo constructor from map', () async {
     Gemini.init(
-        // apiKey: 'AIzaSyDIZJ0ZW4WoRxQt00twWLWhLFTALs0auMU',
-        apiKey: 'AIzaSyD6hiA3ecFA12nPGAJgZln-yvR_bvVZhMw',
-        generationConfig: GenerationConfig(temperature: 0));
+      apiKey: 'AIzaSyD6hiA3ecFA12nPGAJgZln-yvR_bvVZhMw',
+      enableDebugging: true,
+      generationConfig: GenerationConfig(temperature: 0.5),
+      baseURL: 'https://language.googleapis.com/v1/projects/<project-id>/locations/<location>/models/gemini-pro:generateContent'
+    );
     //Arrange
     final gemini = Gemini.instance;
+    final info = await gemini.info(model: 'gemini-pro-vision');
+    print(info);
 
-    final response = await gemini.listModels();
-    // print(response);
-
-        final geminiResponse = await gemini
-        .text('what is the year of the first World War');
-        print(geminiResponse);
+    final geminiResponse = await gemini.text('año de la segunda guerra mundial', modelName: 'gemini-pro-vision');
+    print(geminiResponse);
   });
 
   test('getAlternateTransferList', () async {

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pharma_transfer/controller/image_gemini_decoder.dart';
 import 'package:pharma_transfer/controller/transf_service.dart';
@@ -41,16 +42,24 @@ class ProviderTransferencias extends ChangeNotifier {
   List<Transferencia> get getTransferenciasTerminadas =>
       _transferenciasTerminadas;
 
-  List<UserLocation> get getUserLocationList => _usersLocationList;
+  Map<String, List<UserLocation>> get getUserLocationList => _getUserLocationList();
 
 
-  Future<List<UserLocation>> _getUserLocationList() async{
-    List<UserLocation> usersLocation = [];
-    for (var location in _usersLocationList){
-      
-    }
+  Map<String, List<UserLocation>> _getUserLocationList() {
+    Map<String, List<UserLocation>> groupedByUser =
+        _usersLocationList.groupListsBy((loc) => loc.userName);
 
-    return [];
+    groupedByUser.forEach((userName, userLocations) {
+      userLocations.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+    });
+
+    // for (var user in groupedByUser.keys) {
+    //   debugPrint(
+    //       'registros para usuario user :  ${groupedByUser[user]?.length}');
+    //       debugPrint(
+    //       'el registro más reciente es :  ${groupedByUser[user]?.first.dateTime}');
+    // }
+    return groupedByUser;
   }
 
   List<Transferencia> _getTransferenciasActivas() {
@@ -168,7 +177,12 @@ class ProviderTransferencias extends ChangeNotifier {
 
   Future<void> getCurrentUser() async {
     final accountGoogle = GoogleSignInService.currentUser();
-    currentUser = await getUserWithEmail(accountGoogle!.email);
+    final user = await getUserWithEmail(accountGoogle!.email);
+    if (user == null) {
+      //TODO: lanzar una excepcion
+      return;
+    }
+    currentUser = user;
   }
 
   Set<Pharma> _getFarmaciasParaEntregar() {
@@ -241,7 +255,7 @@ class ProviderTransferencias extends ChangeNotifier {
           Transferencia transferencia) =>
       transfService.updateTransfEntrega(transferencia, currentUser!);
 
-       Future<Either<String, bool>> updateTransfRetiro(
+  Future<Either<String, bool>> updateTransfRetiro(
           Transferencia transferencia) =>
       transfService.updateTransfRetiro(transferencia, currentUser!);
 }

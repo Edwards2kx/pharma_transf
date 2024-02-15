@@ -99,8 +99,9 @@ class _HomePageState extends State<HomePage> {
           drawer: CustomDrawer(
               controller: controller,
               scaffoldKey: scaffoldKey,
-              accountGoogle: accountGoogle),
-          body: Container(
+              // accountGoogle: accountGoogle
+              ),
+          body: SizedBox(
             width: double.infinity,
             height: double.infinity,
             // color: const Color(0xFFE7E7E7),
@@ -183,10 +184,18 @@ class _HomePageState extends State<HomePage> {
   Future<void> getImageAndProcess(ImageSource imageSource) async {
     try {
       final imagePicker = ImagePicker();
-      final imageFile = await imagePicker.pickImage(source: imageSource);
+      final imageFile =
+          await imagePicker.pickImage(source: imageSource, imageQuality: 90);
       if (imageFile == null) return;
+      final imageFileAsBytes = await imageFile.readAsBytes();
+      debugPrint(
+          'tamaño de la imagen original size in bytes ${imageFileAsBytes.elementSizeInBytes}');
+      debugPrint(
+          'longitud de la imagen original len in bytes  ${imageFileAsBytes.lengthInBytes}');
       final imageCropped = await _callImageCropper(imageFile.path);
       if (imageCropped == null) return;
+
+      debugPrint('tamaño de la imagen:  ${imageCropped.lengthInBytes}');
       _showImageResultBottomSheet(imageCropped);
     } catch (e) {
       debugPrint('Error al seleccionar la imagen: $e');

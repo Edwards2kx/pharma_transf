@@ -1,168 +1,177 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_map/flutter_map.dart';
-// import 'package:flutter_map/plugin_api.dart';
-// import 'package:latlong2/latlong.dart';
-// import 'package:yuragrowapp/src/domain/location/location_user.dart';
-
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:pharma_transfer/models/user_location_model.dart';
+import 'package:pharma_transfer/utils/utils.dart';
+
+const double kMinDistance = 200.0;
 
 class UsersLocationMapScreen extends StatelessWidget {
   final MapController mapController = MapController();
   final List<UserLocation> usersLocation;
-  UsersLocationMapScreen({super.key, required this.usersLocation});
+  final bool isMultiUser;
+  UsersLocationMapScreen(
+      {super.key, required this.usersLocation, this.isMultiUser = false});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.transparent),
       extendBodyBehindAppBar: true,
+      floatingActionButton: isMultiUser
+          ? floatingIsMultiUser(context)
+          : floatingIsSingleUser(context),
       body: FlutterMap(
+        mapController: mapController,
         options: const MapOptions(
             initialCenter: LatLng(-0.22985, -78.52495), //Quito
             initialZoom: 7,
-            minZoom: 5),
+            minZoom: 3),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.app',
           ),
           MarkerLayer(
-            markers: _buildMarkers(usersLocation),
+            markers: _buildMarkers(context, usersLocation),
           ),
         ],
       ),
     );
   }
-}
 
-// class MapWithLocations extends StatelessWidget {
-//   final List<LocationUser> listaUbicaciones;
-//   final MapController mapController = MapController();
-//   MapWithLocations({super.key, required this.listaUbicaciones});
-// @override
-// Widget build(BuildContext context) {
-// return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: Colors.transparent,
-//         elevation: 0,
-//       ),
-//       extendBodyBehindAppBar: true,
-//       floatingActionButton: (FloatingActionButton(
-//         onPressed: () {
-//           if (listaUbicaciones.isNotEmpty) {
-//             final lastLocation = listaUbicaciones.last;
-
-//             mapController.move(
-//                 LatLng(
-//                   double.parse(lastLocation.lat),
-//                   double.parse(lastLocation.lon),
-//                 ),
-//                 15.0);
-//           }
-//         },
-//         child: Icon(
-//           Icons.gps_fixed,
-//         ),
-//       )),
-//       body: FlutterMap(
-//         mapController: mapController,
-//         options: MapOptions(
-//             center: LatLng(-0.22985, -78.52495),
-//             zoom: 10,
-//             minZoom: 5,
-//             //maxZoom: 20,
-//             interactiveFlags: InteractiveFlag.all & ~InteractiveFlag.rotate),
-//         nonRotatedChildren: [
-//           MarkerLayer(
-//             markers: _buildMarkers(listaUbicaciones),
-//           ),
-//           AttributionWidget.defaultWidget(
-//             source: 'OpenStreetMap contributors',
-//             onSourceTapped: null,
-//           ),
-//         ],
-//         children: [
-//           TileLayer(
-//             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-//             userAgentPackageName: 'com.example.app',
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-List<Marker> _buildMarkers(List<UserLocation> listLocationUser) {
-  List<Marker> markers = [];
-  for (var location in listLocationUser) {
-    final marker = Marker(
-      point: LatLng(location.latitud, location.longitud),
-      child: const Icon(Icons.location_pin, color: Colors.red, size: 32)
-      // child: Column(
-      //   children: [
-      //     Text(location.userName),
-      //     const Icon(Icons.location_pin, color: Colors.red, size: 32)
-      //   ],
-      // ),
+  FloatingActionButton floatingIsMultiUser(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () => _searchUserDialogList(context),
+      child: const Icon(Icons.search_outlined),
     );
-    markers.add(marker);
   }
-  return markers;
+
+  FloatingActionButton floatingIsSingleUser(BuildContext context) {
+    final lastLoc = usersLocation.first;
+    return FloatingActionButton(
+      onPressed: () =>
+          mapController.move(LatLng(lastLoc.latitud, lastLoc.longitud), 15.0),
+      child: const Icon(Icons.location_searching_outlined),
+    );
+  }
+
+  Future<dynamic> _searchUserDialogList(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: const Text('Escoge ubicación a buscar'),
+          children: usersLocation
+              .map(
+                (e) => ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    mapController.move(LatLng(e.latitud, e.longitud), 15.0);
+                  },
+                  title: Text(e.userName),
+                  trailing: CircleAvatar(
+                    child: Text(Utils.get2FirtsInitials(e.userName)),
+                  ),
+                ),
+              )
+              .toList(),
+        );
+      },
+    );
+  }
+
+  // List<Marker> _buildMarkers(context, List<UserLocation> listLocationUser) {
+  //   final labelStyle = Theme.of(context).textTheme.labelSmall;
+  //   List<Marker> markers = [];
+  //   LatLng? prevLocation;
+  //   for (var location in listLocationUser) {
+  //     final currentLoc = LatLng(location.latitud, location.longitud);
+  //     prevLocation ??= currentLoc;
+
+  //     final marker = Marker(
+  //       width: 80,
+  //       height: 120,
+  //       point: currentLoc,
+  //       child: Column(
+  //         children: [
+  //           CircleAvatar(
+  //               child: Text(Utils.get2FirtsInitials(location.userName))),
+  //           const Icon(Icons.location_pin, color: Colors.red, size: 32),
+  //           Card(
+  //             color: Colors.black12,
+  //             elevation: 0,
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(4.0),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.center,
+  //                 children: [
+  //                   Text(
+  //                     DateFormat('dd-MM-yy').format(location.dateTime),
+  //                     style: labelStyle,
+  //                   ),
+  //                   Text(DateFormat('HH:mm').format(location.dateTime),
+  //                       style: labelStyle),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //     markers.add(marker);
+  //   }
+  //   return markers;
+  // }
+  List<Marker> _buildMarkers(context, List<UserLocation> listLocationUser) {
+    final labelStyle = Theme.of(context).textTheme.labelSmall;
+    LatLng? prevLocation;
+    List<Marker> markers = [];
+    for (var location in listLocationUser) {
+      final currentLoc = LatLng(location.latitud, location.longitud);
+      if (prevLocation == null ||
+          Geolocator.distanceBetween(
+                  prevLocation.latitude,
+                  prevLocation.longitude,
+                  currentLoc.latitude,
+                  currentLoc.longitude) >=
+              kMinDistance) {
+        final marker = Marker(
+          width: 80,
+          height: 120,
+          point: currentLoc,
+          child: Column(
+            children: [
+              CircleAvatar(
+                  child: Text(Utils.get2FirtsInitials(location.userName))),
+              const Icon(Icons.location_pin, color: Colors.red, size: 32),
+              Card(
+                color: Colors.black12,
+                elevation: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        DateFormat('dd-MM-yy').format(location.dateTime),
+                        style: labelStyle,
+                      ),
+                      Text(DateFormat('HH:mm').format(location.dateTime),
+                          style: labelStyle),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+        markers.add(marker);
+      }
+      prevLocation = currentLoc;
+    }
+    return markers;
+  }
 }
-
-
-
-//   List<Marker> _buildMarkers(List<LocationUser> listLocationUser) {
-//     var markers = <Marker>[];
-//     for (var locationUser in listLocationUser) {
-//       final newMarker = Marker(
-//         //anchorPos: AnchorPos.exactly(Anchor(120, 50)),
-//         width: 120,
-//         height: 100,
-//         point: LatLng(
-//           double.parse(locationUser.lat),
-//           double.parse(locationUser.lon),
-//         ),
-//         builder: (context) {
-//           return Column(
-//             children: [
-//               Container(
-//                 padding: EdgeInsets.all(4),
-//                 color: Colors.black26,
-//                 child: Column(
-//                   children: [
-//                     Text(
-//                       '${locationUser.nombre} ${locationUser.apellido?[0]}.',
-//                       //'${locationUser.nombre} ${locationUser.apellido}',
-//                       overflow: TextOverflow.ellipsis,
-//                       style: TextStyle(
-//                           color: Colors.white, fontWeight: FontWeight.w600),
-//                     ),
-//                     Text(
-//                       locationUser.fecha.toString().substring(0, 10),
-//                       style: TextStyle(
-//                           color: Colors.white, fontWeight: FontWeight.w600),
-//                     ),
-//                     Text(
-//                       locationUser.fecha.toString().substring(10, 16),
-//                       style: TextStyle(
-//                           color: Colors.white, fontWeight: FontWeight.w600),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//               Icon(
-//                 Icons.pin_drop,
-//                 color: Colors.red,
-//                 size: 32,
-//               ),
-//             ],
-//           );
-//         },
-//       );
-//       markers.add(newMarker);
-//     }
-//     return markers;
-//   }
-// }
