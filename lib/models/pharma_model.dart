@@ -21,8 +21,12 @@ class Pharma {
   factory Pharma.fromJson(Map<String, dynamic> json) => Pharma(
         farmasId: json["farmas_id"],
         farmasName: json["farmas_name"],
-        farmasLat: double.parse(json["farmas_lat"]),
-        farmasLon: double.parse(json["farmas_lon"]),
+        farmasLat: json["farmas_lat"] != null
+            ? double.parse(json["farmas_lat"])
+            : null,
+        farmasLon: json["farmas_lon"] != null
+            ? double.parse(json["farmas_lon"])
+            : null,
         farmasHorario: json["farmas_horario"],
       );
 
