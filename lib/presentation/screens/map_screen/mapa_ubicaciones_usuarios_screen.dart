@@ -26,8 +26,9 @@ class UsersLocationMapScreen extends StatelessWidget {
       body: FlutterMap(
         mapController: mapController,
         options: const MapOptions(
-            initialCenter: LatLng(-0.22985, -78.52495), //Quito
-            initialZoom: 7,
+            initialCenter: LatLng(-0.22985, -78.48495), //Quito
+            // initialCenter: LatLng(-0.22985, -78.52495), //Quito
+            initialZoom: 12,
             minZoom: 3),
         children: [
           TileLayer(
@@ -126,7 +127,7 @@ class UsersLocationMapScreen extends StatelessWidget {
   //   return markers;
   // }
   List<Marker> _buildMarkers(context, List<UserLocation> listLocationUser) {
-    final labelStyle = Theme.of(context).textTheme.labelSmall;
+    final labelStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white);
     LatLng? prevLocation;
     List<Marker> markers = [];
     for (var location in listLocationUser) {
@@ -148,7 +149,7 @@ class UsersLocationMapScreen extends StatelessWidget {
                   child: Text(Utils.get2FirtsInitials(location.userName))),
               const Icon(Icons.location_pin, color: Colors.red, size: 32),
               Card(
-                color: Colors.black12,
+                color: Colors.black38,
                 elevation: 0,
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),

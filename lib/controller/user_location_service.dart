@@ -6,7 +6,7 @@ class UserLocationService {
   Future<bool> pushUserLocation(UserLocation userLocation) =>
       _pushUserLocation(userLocation);
 
-  Future<List<UserLocation>> fetchUsersLocation() => _fetchUsersLocation();
+  Future<List<UserLocation>> fetchUsersMotoLocation() => _fetchUsersLocation();
 
   Future<bool> _pushUserLocation(UserLocation userLocation) async {
     var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');

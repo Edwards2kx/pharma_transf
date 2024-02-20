@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
-import 'package:pharma_transfer/models/pharma_model.dart';
 import 'package:pharma_transfer/presentation/screens/home_screen/widgets/pharma_card_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -12,14 +11,14 @@ class PharmaPage extends StatefulWidget {
   PharmaPageState createState() => PharmaPageState();
 }
 
-class PharmaPageState extends State<PharmaPage> {
+class PharmaPageState extends State<PharmaPage> with AutomaticKeepAliveClientMixin{
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final provider = Provider.of<ProviderTransferencias>(context, listen: true);
-    final userLatitud = provider.latitud;
-    final userLongitud = provider.longitud;
-    List<Pharma> farmasToDelivery = provider.getFarmaciasParaEntregar.toList();
-    List<Pharma> farmasToPickUp = provider.getFarmaciasParaRecoger.toList();
+    final farmasToDelivery = provider.getFarmaciasParaEntregar.toList();
+    final farmasToPickUp = provider.getFarmaciasParaRecoger.toList();
+
     return RefreshIndicator(
       onRefresh: provider.fetchTransferenciasActivas,
       child: Padding(
@@ -38,12 +37,7 @@ class PharmaPageState extends State<PharmaPage> {
                         ?.copyWith(fontWeight: FontWeight.w300),
                   ),
                   const SizedBox(height: 8.0),
-                  ...farmasToDelivery.map(
-                    (f) => PharmaCardWidget(
-                        farmacia: f,
-                        userLatitud: userLongitud,
-                        userLongitud: userLatitud),
-                  ),
+                  ...farmasToDelivery.map((f) => PharmaCardWidget(pharmaInfo: f)),
                   const Divider(),
                 ],
               ),
@@ -58,13 +52,7 @@ class PharmaPageState extends State<PharmaPage> {
                       ?.copyWith(fontWeight: FontWeight.w300),
                 ),
                 const SizedBox(height: 8.0),
-                ...farmasToPickUp.map(
-                  (f) => PharmaCardWidget(
-                    farmacia: f,
-                    userLatitud: userLongitud,
-                    userLongitud: userLatitud,
-                  ),
-                ),
+                ...farmasToPickUp.map((f) => PharmaCardWidget(pharmaInfo: f)),
               ],
             ),
             const SizedBox(height: 48.0),
@@ -73,4 +61,7 @@ class PharmaPageState extends State<PharmaPage> {
       ),
     );
   }
+  
+  @override
+  bool get wantKeepAlive => true;
 }

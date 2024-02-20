@@ -3,9 +3,11 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/controller/transf_service.dart';
 import 'package:pharma_transfer/models/pharma_model.dart';
 import 'package:pharma_transfer/models/user_model.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 void main() {
   final User usuarioAdministrador = User(
@@ -70,4 +72,21 @@ void main() {
     expect(pharma, isNotNull);
 
   });
+
+  test('get farma from server and similarity', () async {
+
+    final farmacias = await getPharmaFromServer();
+    var listaNombresFarmacias = farmacias.map((e) => e.farmasName).toList();
+       final mejorComparativa =
+          StringSimilarity.findBestMatch('ECO CONOCOTO MONTAFAR', listaNombresFarmacias);
+
+     final nombreMejorRelacionado = listaNombresFarmacias[mejorComparativa.bestMatchIndex];     
+ 
+    print('cantidad farmacias ${farmacias.length}');
+    // print('vector comparación farmacias ${mejorComparativa.ratings}');ß
+    print('nombre más parecido $nombreMejorRelacionado');
+  });
+
 }
+
+

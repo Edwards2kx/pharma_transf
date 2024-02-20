@@ -32,7 +32,7 @@ class UbicacionesUsuariosPage extends StatelessWidget {
         icon: const Icon(Icons.location_history),
       ),
       body: RefreshIndicator(
-        onRefresh: provider.fetchUsersLocation,
+        onRefresh: provider.fetchUsersMotoLocation,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

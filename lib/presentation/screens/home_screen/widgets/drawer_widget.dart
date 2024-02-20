@@ -10,9 +10,7 @@ class CustomDrawer extends StatefulWidget {
   final PageController controller;
   final GlobalKey<ScaffoldState> scaffoldKey;
   const CustomDrawer(
-      {super.key,
-      required this.controller,
-      required this.scaffoldKey});
+      {super.key, required this.controller, required this.scaffoldKey});
 
   @override
   State<CustomDrawer> createState() => _CustomDrawerState();
@@ -20,9 +18,16 @@ class CustomDrawer extends StatefulWidget {
 
 class _CustomDrawerState extends State<CustomDrawer> {
   int navDrawerIndex = 1;
+  @override
+  void initState() {
+    navDrawerIndex = widget.controller.page?.round() ?? 1;
+    super.initState();
+  }
+  // int navDrawerIndex = 1;
 
   @override
   Widget build(BuildContext context) {
+    widget.controller.page?.round();
     final usuario = context.read<ProviderTransferencias>().currentUser;
     return NavigationDrawer(
         selectedIndex: navDrawerIndex,
@@ -86,4 +91,3 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ]);
   }
 }
-

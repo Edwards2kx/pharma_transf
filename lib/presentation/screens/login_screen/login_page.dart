@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
               'PharmaTransf',
               style: Theme.of(context)
                   .textTheme
-                  .displayLarge
+                  .displaySmall
                   ?.copyWith(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 0),
             ),
             const SizedBox(height: 128),

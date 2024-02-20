@@ -11,10 +11,11 @@ class TransferenciasPage extends StatefulWidget {
   TransferenciasPageState createState() => TransferenciasPageState();
 }
 
-class TransferenciasPageState extends State<TransferenciasPage> {
+class TransferenciasPageState extends State<TransferenciasPage> with AutomaticKeepAliveClientMixin {
   bool onlyNearPharma = false;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final provider = Provider.of<ProviderTransferencias>(context, listen: true);
 
     final List<Transferencia> transferencias = provider.getTransferenciasActivas;
@@ -144,4 +145,7 @@ class TransferenciasPageState extends State<TransferenciasPage> {
       children: cards,
     );
   }
+  
+  @override
+  bool get wantKeepAlive => true;
 }

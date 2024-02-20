@@ -13,7 +13,6 @@ const TextStyle textStyleValue = TextStyle(
 const TextStyle textStyleLabel = TextStyle(
     fontSize: 14.0, color: Colors.black54, fontWeight: FontWeight.w300);
 
-
 class TransferCard extends StatefulWidget {
   final Transferencia transferencia;
 
@@ -31,6 +30,20 @@ class TransferCardState extends State<TransferCard> {
               ? Colors.yellow
               : Colors.green;
 
+  String actionByStatus() =>
+      widget.transferencia.estado == EstadoTransferencia.pendiente
+          ? 'Recogido?'
+          : widget.transferencia.estado == EstadoTransferencia.recogido
+              ? 'Entregado?'
+              : 'Terminado';
+
+  String statusStrByStatus() =>
+      widget.transferencia.estado == EstadoTransferencia.pendiente
+          ? 'Pendiente'
+          : widget.transferencia.estado == EstadoTransferencia.recogido
+              ? 'Recogido'
+              : 'Entregado';
+
   // Color colorByStatus(EstadoTransferencia estado) {
   //   if (estado == EstadoTransferencia.pendiente) return Colors.red;
   //   if (estado == EstadoTransferencia.recogido) return Colors.yellow;
@@ -43,29 +56,31 @@ class TransferCardState extends State<TransferCard> {
 
     // var _estadoTransferencia = transferencia.estadoTransferencia();
     var estadoTransferencia = transferencia.estado;
-    String estado;
-    Color color;
-    String accion;
-    DateTime fechaHora = transferencia.transfDateGenerado!;
-    debugPrint(transferencia.toString());
+    // String estado;
+    // Color color;
+    // String accion;
+    // DateTime fechaHora = transferencia.transfDateGenerado!;
+    DateTime fechaHora = transferencia.estado == EstadoTransferencia.entregado
+        ? transferencia.transfDateSubida!
+        : transferencia.transfDateGenerado!;
 
-    switch (estadoTransferencia) {
-      case EstadoTransferencia.pendiente:
-        estado = 'Pendiente';
-        color = Colors.red;
-        accion = 'Recogido?';
-        break;
-      case EstadoTransferencia.recogido:
-        estado = 'Recogido';
-        color = Colors.yellow;
-        accion = 'Entregado?';
-        break;
-      case EstadoTransferencia.entregado:
-        estado = 'Entregado';
-        color = Colors.green;
-        accion = 'Terminado';
-        break;
-    }
+    // switch (estadoTransferencia) {
+    //   case EstadoTransferencia.pendiente:
+    //     estado = 'Pendiente';
+    //     // color = Colors.red;
+    //     accion = 'Recogido?';
+    //     break;
+    //   case EstadoTransferencia.recogido:
+    //     estado = 'Recogido';
+    //     // color = Colors.yellow;
+    //     accion = 'Entregado?';
+    //     break;
+    //   case EstadoTransferencia.entregado:
+    //     estado = 'Entregado';
+    //     // color = Colors.green;
+    //     accion = 'Terminado';
+    //     break;
+    // }
 
     return Card(
       margin: const EdgeInsets.all(8.0),
@@ -124,13 +139,13 @@ class TransferCardState extends State<TransferCard> {
                         await _changeTransfState(transferencia);
                       }
                     },
-                    child: Text(accion),
+                    child: Text(actionByStatus()),
                   ),
                 Expanded(child: Container()),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('Estado:   $estado    '),
+                    Text('Estado:   ${statusStrByStatus()}    '),
                     // Icon(Icons.circle, color: color)
                     Icon(Icons.circle, color: colorByStatus())
                   ],
@@ -168,12 +183,13 @@ class TransferCardState extends State<TransferCard> {
                       final result =
                           await provider.updateTransfRetiro(transferencia);
                       if (result.isLeft) {
-                        final snackMessage = customSnackBar(context, message: result.left);
+                        final snackMessage =
+                            customSnackBar(context, message: result.left);
                         ScaffoldMessenger.of(context)
                             .showSnackBar(snackMessage);
                       } else {
-                        final snackMessage = customSnackBar(context, message:
-                            "Se realizó la acción correctamente");
+                        final snackMessage = customSnackBar(context,
+                            message: "Se realizó la acción correctamente");
                         ScaffoldMessenger.of(context)
                             .showSnackBar(snackMessage);
                       }
@@ -183,12 +199,13 @@ class TransferCardState extends State<TransferCard> {
                       final result =
                           await provider.updateTransfEntrega(transferencia);
                       if (result.isLeft) {
-                        final snackMessage = customSnackBar(context, message: result.left);
+                        final snackMessage =
+                            customSnackBar(context, message: result.left);
                         ScaffoldMessenger.of(context)
                             .showSnackBar(snackMessage);
                       } else {
-                        final snackMessage = customSnackBar(context, message: 
-                            "Se realizó la acción correctamente");
+                        final snackMessage = customSnackBar(context,
+                            message: "Se realizó la acción correctamente");
                         ScaffoldMessenger.of(context)
                             .showSnackBar(snackMessage);
                       }

@@ -1,7 +1,7 @@
 name: pharma_transfer
 description: "Pharma Transf App"
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: '>=3.2.1 <4.0.0'
@@ -62,3 +62,4 @@ flutter:
   assets:
     - assets/
     - .env
+    - shorebird.yaml

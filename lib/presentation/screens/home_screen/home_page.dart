@@ -20,7 +20,6 @@ import 'package:pharma_transfer/presentation/providers/provider_transferencias.d
 import 'package:pharma_transfer/controller/server_comunication.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
 
-
 const bool kUseCropper = true;
 const bool kallowGuestMode = false;
 
@@ -36,7 +35,9 @@ class _HomePageState extends State<HomePage> {
   final _connectivity = Connectivity();
   late GoogleSignInAccount? accountGoogle;
   final PageController controller = PageController(initialPage: 1);
+  final List<int> _pageKeys = [0, 1, 2, 3];
 
+//TODO:remover estos 2 estados
   bool showSearchButton = false;
   bool showSearchBox = false;
   String searchString = '';
@@ -77,6 +78,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    controller.dispose(); // Liberar recursos asociados con el PageController
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider =
         Provider.of<ProviderTransferencias>(context, listen: false);
@@ -96,21 +103,22 @@ class _HomePageState extends State<HomePage> {
           key: scaffoldKey,
           appBar: _buildAppBar(lastUpdate),
           drawer: CustomDrawer(
-              controller: controller,
-              scaffoldKey: scaffoldKey,
-              // accountGoogle: accountGoogle
-              ),
+            controller: controller,
+            scaffoldKey: scaffoldKey,
+            // accountGoogle: accountGoogle
+          ),
           body: SizedBox(
             width: double.infinity,
             height: double.infinity,
             // color: const Color(0xFFE7E7E7),
             child: PageView(
-              controller: controller,
+              controller: controller, 
               children: [
-                const TransferenciasPage(),
-                const PharmaPage(),
-                HistorialTansferenciasPage(searchString: searchString),
-                if (isAdmin) const UbicacionesUsuariosPage()
+                const TransferenciasPage(key: ValueKey<int>(0)),
+                const PharmaPage(key: ValueKey<int>(1)),
+                const HistorialTansferenciasPage( key: ValueKey<int>(2)),
+                // const HistorialTansferenciasPage(searchString: searchString, key: ValueKey<int>(2)),
+                if (isAdmin) const UbicacionesUsuariosPage(key: ValueKey<int>(3))
               ],
             ),
           ),
