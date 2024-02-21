@@ -24,10 +24,10 @@ class ProviderTransferencias extends ChangeNotifier {
   List<Transferencia> _transferenciasActivas = [];
   List<Transferencia> _transferenciasTerminadas = [];
   User? currentUser;
-  Pharma? currentPharma;
+  Pharma? _currentPharma;
   double? latitud; //la vista no deveria necesitar latitud y longitud
   double? longitud;
-  double minimunDistance = 200.0;
+  final double kMinimunDistance = 200.0;
   DateTime lastUpdate = DateTime.now();
   bool firstBoot = false;
   bool isLoading = false;
@@ -41,7 +41,7 @@ class ProviderTransferencias extends ChangeNotifier {
 
   Set<PharmaInfo> get getFarmaciasParaEntregar => _getFarmaciasParaEntregar();
 
-  // Set<Pharma?> get getFarmaciaCercana => _getFarmaciaCercana();
+  Pharma? get getFarmaciaCercana => _currentPharma;
 
   List<Transferencia> get getTransferenciasActivas =>
       _getTransferenciasActivas();
@@ -51,6 +51,14 @@ class ProviderTransferencias extends ChangeNotifier {
 
   Map<String, List<UserLocation>> get getUserLocationList =>
       _getUserLocationList();
+
+  Future<Either<String, bool>> updateTransfEntrega(
+          Transferencia transferencia) =>
+      transfService.updateTransfEntrega(transferencia, currentUser!);
+
+  Future<Either<String, bool>> updateTransfRetiro(
+          Transferencia transferencia) =>
+      transfService.updateTransfRetiro(transferencia, currentUser!);
 
   Map<String, List<UserLocation>> _getUserLocationList() {
     Map<String, List<UserLocation>> groupedByUser =
@@ -84,8 +92,8 @@ class ProviderTransferencias extends ChangeNotifier {
     await fetchTransferenciasActivas(); //aqui obtengo la ubicacion
     await fetchTransferenciasTerminadas(); //*probar un lazyload
     await fetchUsersMotoLocation(); //*probar un lazyload
+    await updateNearPharma();
     await registrarUbicacion();
-    // await actualizarUbicacionActual();
     isLoading == false;
   }
 
@@ -126,18 +134,23 @@ class ProviderTransferencias extends ChangeNotifier {
 //    notifyListeners();
   }
 
-  Future<Pharma?> nearPharma() async {
+  Future<void> updateNearPharma() async {
+    if (isLoading) return;
+    isLoading = true;
     final pharmacies = _pharmaList;
-    if (pharmacies.isEmpty) return null;
-    Position position = await Geolocator.getCurrentPosition();
-    latitud = position.latitude;
-    longitud = position.longitude;
-    // Calcula las distancias a todas las farmacias
+    if (pharmacies.isEmpty) return;
+    final response = await actualizarUbicacionActual();
+    if (!response) {
+      _currentPharma = null;
+      isLoading = false;
+      return;
+    }
+
     List<double> distances = pharmacies.map((pharma) {
       if (pharma.farmasLat != null && pharma.farmasLon != null) {
         double distance = Geolocator.distanceBetween(
-          position.latitude,
-          position.longitude,
+          latitud!,
+          longitud!,
           pharma.farmasLat!,
           pharma.farmasLon!,
         );
@@ -147,15 +160,19 @@ class ProviderTransferencias extends ChangeNotifier {
       }
     }).toList();
 
-    // Encuentra la farmacia más cercana
     double minDistance =
         distances.reduce((value, element) => value < element ? value : element);
-    int index = distances.indexOf(minDistance);
 
-    // Retorna la farmacia más cercana
-    //TODO verificar que la distancia esté en el rango minimunDistance
-    currentPharma = pharmacies[index];
-    return currentPharma;
+    if (minDistance > kMinimunDistance) {
+      _currentPharma = null;
+      isLoading = false;
+      return;
+    }
+    final index = distances.indexOf(minDistance);
+    _currentPharma = pharmacies[index];
+    isLoading = false;
+    notifyListeners();
+    return;
   }
 
   Future<Either<String, Recibo>> procesarImagenRecibo(Uint8List? imageBytes) =>
@@ -200,14 +217,6 @@ class ProviderTransferencias extends ChangeNotifier {
 
         productosPorFarmacia.update(farmacia.farmasName!, (value) => value + 1,
             ifAbsent: () => productosEnTransferencia);
-
-        // if (productosPorFarmacia.containsKey(farmacia.farmasName)) {
-        //   productosPorFarmacia[farmacia.farmasName!] =
-        //       productosPorFarmacia[farmacia.farmasName]! + 1;
-        // } else {
-        //   productosPorFarmacia
-        //       .addAll({farmacia.farmasName!: productosEnTransferencia});
-        // }
       }
     }
     for (var f in farmasParaEntregar) {
@@ -230,49 +239,7 @@ class ProviderTransferencias extends ChangeNotifier {
     return farmasInfo;
   }
 
-  //   Set<Pharma> _getFarmaciasParaEntregar() {
-  //   Set<Pharma> farmasParaEntregar = {};
-  //   for (var transferencia in _transferenciasActivas) {
-  //     final farmaSolicita = transferencia.transfFarmaSolicita;
-  //     final farmaAcepta = transferencia.transfFarmaAcepta;
-  //     final estado = transferencia.estado;
-  //     final dataCompleta = (farmaSolicita != null && farmaAcepta != null);
-  //     final perteneUsuario =
-  //         (transferencia.usuarioRecoge == currentUser?.usersEmail);
-
-  //     if (estado == EstadoTransferencia.recogido &&
-  //         dataCompleta &&
-  //         perteneUsuario) {
-  //       final farmacia = _pharmaList.firstWhere(
-  //           (f) => f.farmasName == farmaSolicita,
-  //           orElse: () => Pharma()..farmasName = farmaSolicita);
-  //       farmasParaEntregar.add(farmacia);
-  //     }
-  //   }
-  //   return farmasParaEntregar;
-  // }
-
-  // Set<Pharma> _getFarmaciasParaRecoger() {
-  //   Set<Pharma> farmasParaRecoger = {};
-  //   for (var transferencia in _transferenciasActivas) {
-  //     final farmaSolicita = transferencia.transfFarmaSolicita;
-  //     final farmaAcepta = transferencia.transfFarmaAcepta;
-  //     final estado = transferencia.estado;
-
-  //     if (estado == EstadoTransferencia.pendiente &&
-  //         farmaSolicita != null &&
-  //         farmaAcepta != null) {
-  //       final farmacia = _pharmaList.firstWhere(
-  //           (f) => f.farmasName == farmaAcepta,
-  //           orElse: () => Pharma()..farmasName = farmaAcepta);
-  //       farmasParaRecoger.add(farmacia);
-  //     }
-  //   }
-  //   return farmasParaRecoger;
-  // }
-
   Set<PharmaInfo> _getFarmaciasParaRecoger() {
-    // List<Pharma> farmasParaRecoger = [];
     Set<Pharma> farmasParaRecoger = {};
     Map<String, int> productosPorFarmacia = {};
     Set<PharmaInfo> farmasInfo = {};
@@ -296,7 +263,6 @@ class ProviderTransferencias extends ChangeNotifier {
 
         productosPorFarmacia.update(farmacia.farmasName!, (value) => value + 1,
             ifAbsent: () => productosEnTransferencia);
-
       }
     }
     for (var f in farmasParaRecoger) {
@@ -366,12 +332,4 @@ class ProviderTransferencias extends ChangeNotifier {
     }
     return false;
   }
-
-  Future<Either<String, bool>> updateTransfEntrega(
-          Transferencia transferencia) =>
-      transfService.updateTransfEntrega(transferencia, currentUser!);
-
-  Future<Either<String, bool>> updateTransfRetiro(
-          Transferencia transferencia) =>
-      transfService.updateTransfRetiro(transferencia, currentUser!);
 }

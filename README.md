@@ -112,3 +112,4 @@ cambiar el icono de la app
 flutter pub run flutter_launcher_icons
 
 
+al actualizar la ubicacion debo actualizar el nearPharma

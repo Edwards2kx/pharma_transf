@@ -36,7 +36,6 @@ class HistorialTansferenciasPageState extends State<HistorialTansferenciasPage>
         onRefresh: () {
           searchBoxController.clear();
           setState(() => searchString = '');
-          // searchString = '';
 
           return provider.fetchTransferenciasTerminadas();
         },
@@ -127,7 +126,6 @@ class HistorialTansferenciasPageState extends State<HistorialTansferenciasPage>
   bool get wantKeepAlive => true;
 }
 
-//TODO: pasar la logica a utils
 Widget? _buildCardTransferencia(List<Transferencia> transferencias,
     String searchWord, Filtro filtroSeleccionado) {
   List<Widget> cards = [];

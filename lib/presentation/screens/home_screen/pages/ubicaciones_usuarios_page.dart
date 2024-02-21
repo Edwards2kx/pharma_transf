@@ -55,7 +55,7 @@ class UbicacionesUsuariosPage extends StatelessWidget {
                     final lastLocation = usersLocation[userName]?.first;
                     final nameText = lastLocation?.userName ?? 'No registra';
                     final dateText = lastLocation?.dateTime != null
-                        ? DateFormat('dd-MM-yy / hh:mm')
+                        ? DateFormat('dd-MM-yy / hh:mm a')
                             .format(lastLocation!.dateTime)
                         : 'N/A';
                     return ListTile(

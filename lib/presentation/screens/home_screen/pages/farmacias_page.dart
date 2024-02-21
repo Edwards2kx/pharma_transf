@@ -3,7 +3,6 @@ import 'package:pharma_transfer/presentation/providers/provider_transferencias.d
 import 'package:pharma_transfer/presentation/screens/home_screen/widgets/pharma_card_widget.dart';
 import 'package:provider/provider.dart';
 
-//const double kDistanceMin = 5.0; //5 km distancia minima
 
 class PharmaPage extends StatefulWidget {
   const PharmaPage({super.key});
@@ -11,7 +10,8 @@ class PharmaPage extends StatefulWidget {
   PharmaPageState createState() => PharmaPageState();
 }
 
-class PharmaPageState extends State<PharmaPage> with AutomaticKeepAliveClientMixin{
+class PharmaPageState extends State<PharmaPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -20,7 +20,10 @@ class PharmaPageState extends State<PharmaPage> with AutomaticKeepAliveClientMix
     final farmasToPickUp = provider.getFarmaciasParaRecoger.toList();
 
     return RefreshIndicator(
-      onRefresh: provider.fetchTransferenciasActivas,
+      onRefresh: () async {
+        await provider.updateNearPharma();
+        return provider.fetchTransferenciasActivas();
+      },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
         child: ListView(
@@ -37,7 +40,8 @@ class PharmaPageState extends State<PharmaPage> with AutomaticKeepAliveClientMix
                         ?.copyWith(fontWeight: FontWeight.w300),
                   ),
                   const SizedBox(height: 8.0),
-                  ...farmasToDelivery.map((f) => PharmaCardWidget(pharmaInfo: f)),
+                  ...farmasToDelivery
+                      .map((f) => PharmaCardWidget(pharmaInfo: f)),
                   const Divider(),
                 ],
               ),
@@ -61,7 +65,7 @@ class PharmaPageState extends State<PharmaPage> with AutomaticKeepAliveClientMix
       ),
     );
   }
-  
+
   @override
   bool get wantKeepAlive => true;
 }

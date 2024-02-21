@@ -11,18 +11,24 @@ class TransferenciasPage extends StatefulWidget {
   TransferenciasPageState createState() => TransferenciasPageState();
 }
 
-class TransferenciasPageState extends State<TransferenciasPage> with AutomaticKeepAliveClientMixin {
+class TransferenciasPageState extends State<TransferenciasPage>
+    with AutomaticKeepAliveClientMixin {
   bool onlyNearPharma = false;
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final provider = Provider.of<ProviderTransferencias>(context, listen: true);
 
-    final List<Transferencia> transferencias = provider.getTransferenciasActivas;
-    final currentPharma = provider.currentPharma;
+    final List<Transferencia> transferencias =
+        provider.getTransferenciasActivas;
+    final currentPharma = provider.getFarmaciaCercana;
 
     return RefreshIndicator(
-      onRefresh: provider.fetchTransferenciasActivas,
+      // onRefresh: provider.fetchTransferenciasActivas,
+      onRefresh: () async {
+        await provider.updateNearPharma();
+        return provider.fetchTransferenciasActivas();
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Column(
@@ -45,88 +51,21 @@ class TransferenciasPageState extends State<TransferenciasPage> with AutomaticKe
                     onlyNearPharma = v;
                   });
                 }),
-        
             onlyNearPharma
                 ? Expanded(
-                    child: buildNearPharmaTransferList(
-                        context, transferencias, currentPharma))
-                : Expanded(child: buildFullTransferList(context, transferencias))
+                    // child: buildNearPharmaTransferList(
+                    //     context, transferencias, currentPharma))
+                    child: buildFilteredTransferList(
+                        transferencias, currentPharma),
+                  )
+                : Expanded(child: buildFullTransferList(transferencias))
           ],
         ),
       ),
     );
   }
 
-  buildNearPharmaTransferList(BuildContext context,
-      List<Transferencia> transferencias, Pharma? currentPharma) {
-    if (transferencias.isEmpty || currentPharma == null) {
-      return const Center(child: Text('No estás cerca un punto de recogida'));
-    }
-    //obtengo de las transferencias las que estan en estado pendiente
-    var tempListPickUp = transferencias
-        .where((f) =>
-            f.transfFarmaAcepta == currentPharma.farmasName &&
-            f.estado == EstadoTransferencia.pendiente)
-        .toList();
-//obtengo de las transferencias las que estan en estado recogido
-    var tempListDelivery = transferencias
-        .where((f) =>
-            f.transfFarmaSolicita == currentPharma.farmasName &&
-            f.estado == EstadoTransferencia.recogido) //Aqui para pruebas
-        .toList();
-
-    if ((tempListPickUp.isEmpty) && (tempListDelivery.isEmpty)) {
-      return const Center(
-          child: Text('No estás cerca un punto de recogida o entrega'));
-    }
-
-    Widget groupPickUp() {
-      return Expanded(
-        child: Column(
-          children: [
-            const Text('PARA RECOGER', style: TextStyle(fontSize: 16.0)),
-            const SizedBox(height: 8.0),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: tempListPickUp.length,
-                  itemBuilder: (ctx, i) =>
-                      TransferCard(transferencia: tempListPickUp[i])),
-              //itemBuilder: (ctx, i) => _buildCard(tempListPickUp[i])),
-            ),
-            const Divider(),
-            const SizedBox(height: 8.0),
-          ],
-        ),
-      );
-    }
-
-    Widget groupDelivery() {
-      return Expanded(
-        child: Column(children: [
-          const Text('PARA ENTREGAR', style: TextStyle(fontSize: 16.0)),
-          const SizedBox(height: 8.0),
-          Expanded(
-            child: ListView.builder(
-                itemCount: tempListDelivery.length,
-                itemBuilder: (ctx, i) =>
-                    TransferCard(transferencia: tempListDelivery[i])),
-            //itemBuilder: (ctx, i) => _buildCard(tempListDelivery[i])),
-          ),
-        ]),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (tempListPickUp.isNotEmpty) groupPickUp(),
-        if (tempListDelivery.isNotEmpty) groupDelivery(),
-      ],
-    );
-  }
-
-  Widget buildFullTransferList(
-      BuildContext context, List<Transferencia> transferencias) {
+  Widget buildFullTransferList(List<Transferencia> transferencias) {
     List<Widget> cards = [];
     if (transferencias.isEmpty) {
       return const Center(child: Text('No hay datos'));
@@ -136,16 +75,58 @@ class TransferenciasPageState extends State<TransferenciasPage> with AutomaticKe
         .where((f) => f.estado != EstadoTransferencia.entregado)
         .toList();
 
-    filteredListTransferencias.forEach((t) {
+    for (var t in filteredListTransferencias) {
       Widget tempWidget = TransferCard(transferencia: t);
       cards.add(tempWidget);
-    });
-
-    return ListView(
-      children: cards,
-    );
+    }
+    return ListView(children: cards);
   }
-  
+
+  Widget buildFilteredTransferList(
+      List<Transferencia> transferencias, Pharma? currentPharma) {
+    List<Widget> cards = [];
+    if (transferencias.isEmpty) {
+      return const Center(child: Text('No hay datos'));
+    }
+
+    List<Transferencia> filteredListTransferencias = transferencias
+        .where((f) =>
+            f.estado == EstadoTransferencia.pendiente &&
+                (f.transfFarmaAcepta == currentPharma?.farmasName) ||
+            f.estado == EstadoTransferencia.recogido &&
+                (f.transfFarmaSolicita == currentPharma?.farmasName))
+        .toList();
+
+    if (filteredListTransferencias.isEmpty) {
+      return SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: Center(
+          child: ListView(children: [
+            const SizedBox(height: 32),
+            const Icon(
+              Icons.location_off_outlined,
+              size: 64,
+              color: Colors.black45,
+            ),
+            const SizedBox(height: 32),
+            Text(
+              'No hay elementos para recoger o entregar en la ubicación actual.',
+              style: Theme.of(context).textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            )
+          ]),
+        ),
+      );
+    }
+
+    for (var t in filteredListTransferencias) {
+      Widget tempWidget = TransferCard(transferencia: t);
+      cards.add(tempWidget);
+    }
+    return ListView(children: cards);
+  }
+
   @override
   bool get wantKeepAlive => true;
 }
