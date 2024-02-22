@@ -2,25 +2,36 @@
 import 'pharma_model.dart';
 
 class PharmaInfo {
-
   final Pharma farmacia;
-  final int productos;
+  final int prodRecoger;
+  final int prodEntregar;
+  final int prodRecogidoUsuario;
   final double? distancia;
 
-  PharmaInfo({required this.farmacia, required this.productos, this.distancia});
+  PharmaInfo(
+      {required this.prodRecogidoUsuario,
+      required this.farmacia,
+      required this.prodRecoger,
+      required this.prodEntregar,
+      this.distancia});
 
   PharmaInfo copyWith({
     Pharma? farmacia,
-    int? productos,
+    int? prodRecoger,
+    int? prodEntregar,
+    int? prodRecogidoUsuario,
     double? distancia,
   }) {
     return PharmaInfo(
       farmacia: farmacia ?? this.farmacia,
-      productos: productos ?? this.productos,
+      prodRecoger: prodRecoger ?? this.prodRecoger,
+      prodEntregar: prodEntregar ?? this.prodEntregar,
+      prodRecogidoUsuario: prodRecogidoUsuario ?? this.prodRecogidoUsuario,
       distancia: distancia ?? this.distancia,
     );
   }
 
   @override
-  String toString() => 'PharmaInfo(farmacia: $farmacia, productos: $productos, distancia: $distancia)';
+  String toString() =>
+      'PharmaInfo(farmacia: $farmacia, productos: $prodRecoger, distancia: $distancia)';
 }

@@ -44,43 +44,14 @@ class TransferCardState extends State<TransferCard> {
               ? 'Recogido'
               : 'Entregado';
 
-  // Color colorByStatus(EstadoTransferencia estado) {
-  //   if (estado == EstadoTransferencia.pendiente) return Colors.red;
-  //   if (estado == EstadoTransferencia.recogido) return Colors.yellow;
-  //   return Colors.green;
-  // }
-
   @override
   Widget build(BuildContext context) {
     Transferencia transferencia = widget.transferencia;
-
-    // var _estadoTransferencia = transferencia.estadoTransferencia();
     var estadoTransferencia = transferencia.estado;
-    // String estado;
-    // Color color;
-    // String accion;
-    // DateTime fechaHora = transferencia.transfDateGenerado!;
+
     DateTime fechaHora = transferencia.estado == EstadoTransferencia.entregado
         ? transferencia.transfDateSubida!
         : transferencia.transfDateGenerado!;
-
-    // switch (estadoTransferencia) {
-    //   case EstadoTransferencia.pendiente:
-    //     estado = 'Pendiente';
-    //     // color = Colors.red;
-    //     accion = 'Recogido?';
-    //     break;
-    //   case EstadoTransferencia.recogido:
-    //     estado = 'Recogido';
-    //     // color = Colors.yellow;
-    //     accion = 'Entregado?';
-    //     break;
-    //   case EstadoTransferencia.entregado:
-    //     estado = 'Entregado';
-    //     // color = Colors.green;
-    //     accion = 'Terminado';
-    //     break;
-    // }
 
     return Card(
       margin: const EdgeInsets.all(8.0),
@@ -212,7 +183,8 @@ class TransferCardState extends State<TransferCard> {
                     }
                     await provider.fetchTransferenciasActivas();
                     context.loaderOverlay.hide();
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                   child: const Text('Si')),
             ],

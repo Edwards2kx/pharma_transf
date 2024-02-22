@@ -37,9 +37,12 @@ class ProviderTransferencias extends ChangeNotifier {
   Future<void> initialLoad() => _initialLoad();
 
   // Set<Pharma> get getFarmaciasParaRecoger => _getFarmaciasParaRecoger();
+  @Deprecated('reemplazado por getFarmaciasConEventos')
   Set<PharmaInfo> get getFarmaciasParaRecoger => _getFarmaciasParaRecoger();
+// @Deprecated('reemplazado por getFarmaciasConEventos')
+  // Set<PharmaInfo> get getFarmaciasParaEntregar => _getFarmaciasParaEntregar();
 
-  Set<PharmaInfo> get getFarmaciasParaEntregar => _getFarmaciasParaEntregar();
+  Set<PharmaInfo> get getFarmaciasConEventos => _getFarmaciasConEventos();
 
   Pharma? get getFarmaciaCercana => _currentPharma;
 
@@ -188,9 +191,62 @@ class ProviderTransferencias extends ChangeNotifier {
     currentUser = user;
   }
 
-  Set<PharmaInfo> _getFarmaciasParaEntregar() {
-    Set<Pharma> farmasParaEntregar = {};
-    Map<String, int> productosPorFarmacia = {};
+  // Set<PharmaInfo> _getFarmaciasParaEntregar() {
+  //   Set<Pharma> farmasParaEntregar = {};
+  //   Map<String, int> productosPorFarmacia = {};
+  //   Set<PharmaInfo> farmasInfo = {};
+
+  //   for (var transferencia in _transferenciasActivas) {
+  //     final farmaSolicita = transferencia.transfFarmaSolicita;
+  //     final farmaAcepta = transferencia.transfFarmaAcepta;
+  //     final estado = transferencia.estado;
+  //     final dataCompleta = (farmaSolicita != null && farmaAcepta != null);
+  //     final perteneceUsuario =
+  //         (transferencia.usuarioRecoge == currentUser?.usersEmail);
+  //     final productosEnTransferencia =
+  //         transferencia.transfCantidadEntera != null
+  //             ? 1
+  //             : transferencia.transfCantidadFraccion != null
+  //                 ? 1
+  //                 : 0;
+
+  //     if (estado == EstadoTransferencia.recogido &&
+  //         dataCompleta &&
+  //         perteneceUsuario) {
+  //       final farmacia = _pharmaList.firstWhere(
+  //           (f) => f.farmasName == farmaSolicita,
+  //           orElse: () => Pharma()..farmasName = farmaSolicita);
+  //       farmasParaEntregar.add(farmacia);
+
+  //       productosPorFarmacia.update(farmacia.farmasName!, (value) => value + 1,
+  //           ifAbsent: () => productosEnTransferencia);
+  //     }
+  //   }
+  //   for (var f in farmasParaEntregar) {
+  //     double? distancia;
+  //     if (latitud != null &&
+  //         longitud != null &&
+  //         f.farmasLat != null &&
+  //         f.farmasLon != null) {
+  //       distancia = Geolocator.distanceBetween(
+  //           latitud!, longitud!, f.farmasLat!, f.farmasLon!);
+  //     }
+  //     farmasInfo.add(
+  //       PharmaInfo(
+  //           farmacia: f,
+  //           distancia: distancia,
+  //           prodRecoger: productosPorFarmacia[f.farmasName]!),
+  //     );
+  //   }
+  //   // return farmasParaEntregar;
+  //   return farmasInfo;
+  // }
+
+  Set<PharmaInfo> _getFarmaciasConEventos() {
+    Set<Pharma> farmasConEvento = {};
+    Map<String, int> cantProdRecogerFarmacia = {};
+    Map<String, int> cantProdEntregarFarmacia = {};
+    Map<String, int> cantProdEntregarUsuario = {};
     Set<PharmaInfo> farmasInfo = {};
 
     for (var transferencia in _transferenciasActivas) {
@@ -207,19 +263,48 @@ class ProviderTransferencias extends ChangeNotifier {
                   ? 1
                   : 0;
 
-      if (estado == EstadoTransferencia.recogido &&
+      // if ((estado == EstadoTransferencia.recogido &&
+      //         dataCompleta &&
+      //         perteneceUsuario) ||
+      //     (estado == EstadoTransferencia.pendiente && dataCompleta)) {
+
+      //producto nuevo para recoger en esta farmacia 
+      if (estado == EstadoTransferencia.pendiente && dataCompleta) {
+        final farmacia = _pharmaList.firstWhere(
+            (f) => f.farmasName == farmaAcepta,
+            orElse: () => Pharma()..farmasName = farmaAcepta);
+        farmasConEvento.add(farmacia);
+
+        cantProdRecogerFarmacia.update(
+            farmacia.farmasName!, (value) => value + 1,
+            ifAbsent: () => productosEnTransferencia);
+      }
+      //producto a llevar a esta farmacia 
+       if (estado == EstadoTransferencia.pendiente && dataCompleta) {
+        final farmacia = _pharmaList.firstWhere(
+            (f) => f.farmasName == farmaSolicita,
+            orElse: () => Pharma()..farmasName = farmaSolicita);
+        farmasConEvento.add(farmacia);
+
+        cantProdEntregarFarmacia.update(
+            farmacia.farmasName!, (value) => value + 1,
+            ifAbsent: () => productosEnTransferencia);
+      }
+      //producto recogido para entregar por usuario
+       if (estado == EstadoTransferencia.recogido &&
           dataCompleta &&
           perteneceUsuario) {
         final farmacia = _pharmaList.firstWhere(
             (f) => f.farmasName == farmaSolicita,
             orElse: () => Pharma()..farmasName = farmaSolicita);
-        farmasParaEntregar.add(farmacia);
+        farmasConEvento.add(farmacia);
 
-        productosPorFarmacia.update(farmacia.farmasName!, (value) => value + 1,
+        cantProdEntregarUsuario.update(
+            farmacia.farmasName!, (value) => value + 1,
             ifAbsent: () => productosEnTransferencia);
       }
     }
-    for (var f in farmasParaEntregar) {
+    for (var f in farmasConEvento) {
       double? distancia;
       if (latitud != null &&
           longitud != null &&
@@ -232,13 +317,16 @@ class ProviderTransferencias extends ChangeNotifier {
         PharmaInfo(
             farmacia: f,
             distancia: distancia,
-            productos: productosPorFarmacia[f.farmasName]!),
+            prodRecoger: cantProdRecogerFarmacia[f.farmasName] ?? 0,
+            prodRecogidoUsuario: cantProdEntregarUsuario[f.farmasName] ?? 0,
+            prodEntregar: cantProdEntregarFarmacia[f.farmasName]?? 0),
       );
     }
     // return farmasParaEntregar;
     return farmasInfo;
   }
 
+@Deprecated('reemplazado por _getFarmaciasConEventos')
   Set<PharmaInfo> _getFarmaciasParaRecoger() {
     Set<Pharma> farmasParaRecoger = {};
     Map<String, int> productosPorFarmacia = {};
@@ -278,7 +366,9 @@ class ProviderTransferencias extends ChangeNotifier {
         PharmaInfo(
             farmacia: f,
             distancia: distancia,
-            productos: productosPorFarmacia[f.farmasName]!),
+            prodRecoger: productosPorFarmacia[f.farmasName]!,
+            prodRecogidoUsuario: 0,
+            prodEntregar: 0),
       );
     }
     return farmasInfo;
