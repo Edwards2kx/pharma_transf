@@ -55,7 +55,7 @@ class Transferencia {
       usuarioRecoge: json["transf_usr_recoge"],
       usuarioEntrega: json["transf_usr_entrega"],
     );
-    if (transferencia.usuarioRecoge == null) {
+    if (transferencia.  usuarioRecoge == null) {
       transferencia.estado = EstadoTransferencia.pendiente;
     } else if (transferencia.usuarioEntrega == null) {
       transferencia.estado = EstadoTransferencia.recogido;

@@ -254,6 +254,8 @@ class ProviderTransferencias extends ChangeNotifier {
       final farmaAcepta = transferencia.transfFarmaAcepta;
       final estado = transferencia.estado;
       final dataCompleta = (farmaSolicita != null && farmaAcepta != null);
+      // final perteneceUsuario =
+      //     (transferencia.usuarioRecoge == 'nedan449@gmail.com');
       final perteneceUsuario =
           (transferencia.usuarioRecoge == currentUser?.usersEmail);
       final productosEnTransferencia =
@@ -279,7 +281,7 @@ class ProviderTransferencias extends ChangeNotifier {
             farmacia.farmasName!, (value) => value + 1,
             ifAbsent: () => productosEnTransferencia);
       }
-      //producto a llevar a esta farmacia 
+      //producto sin recoger a llevar a esta farmacia 
        if (estado == EstadoTransferencia.pendiente && dataCompleta) {
         final farmacia = _pharmaList.firstWhere(
             (f) => f.farmasName == farmaSolicita,

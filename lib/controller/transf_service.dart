@@ -63,6 +63,7 @@ class TransfService {
       }
     } catch (e) {
       debugPrint('error en getActiveTransferList $e');
+      debugPrint(resp.body);
     }
     return transfList;
   }

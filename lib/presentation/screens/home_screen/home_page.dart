@@ -35,12 +35,12 @@ class _HomePageState extends State<HomePage> {
   final _connectivity = Connectivity();
   late GoogleSignInAccount? accountGoogle;
   final PageController controller = PageController(initialPage: 1);
-  final List<int> _pageKeys = [0, 1, 2, 3];
+  // final List<int> _pageKeys = [0, 1, 2, 3];
 
 //TODO:remover estos 2 estados
-  bool showSearchButton = false;
+  // bool showSearchButton = false;
+  // String searchString = '';
   bool showSearchBox = false;
-  String searchString = '';
   TextEditingController searchBoxController = TextEditingController();
   late List<Transferencia> listaTransferencia;
 
@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
     final DateTime lastUpdate = provider.lastUpdate;
     if (accountGoogle == null && kallowGuestMode == false) {
       return const Center(
-        child: Text('No se ha iniciado sesion correctamente'),
+        child: Text('No se ha iniciado sesión correctamente'),
       );
     } else {
       return WillPopScope(

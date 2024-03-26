@@ -68,7 +68,7 @@ class TransferenciasPageState extends State<TransferenciasPage>
   Widget buildFullTransferList(List<Transferencia> transferencias) {
     List<Widget> cards = [];
     if (transferencias.isEmpty) {
-      return const Center(child: Text('No hay datos'));
+      return const Center(child: Text('No hay transferencias activas'));
     }
 
     List<Transferencia> filteredListTransferencias = transferencias
@@ -86,7 +86,7 @@ class TransferenciasPageState extends State<TransferenciasPage>
       List<Transferencia> transferencias, Pharma? currentPharma) {
     List<Widget> cards = [];
     if (transferencias.isEmpty) {
-      return const Center(child: Text('No hay datos'));
+      return const Center(child: Text('No hay transferencias activas'));
     }
 
     List<Transferencia> filteredListTransferencias = transferencias
