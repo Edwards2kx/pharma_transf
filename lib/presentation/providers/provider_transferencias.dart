@@ -20,6 +20,7 @@ class ProviderTransferencias extends ChangeNotifier {
   final UserLocationService _locationService = UserLocationService();
   final TransfService transfService = TransfService();
 
+
   List<Pharma> _pharmaList = [];
   List<Transferencia> _transferenciasActivas = [];
   List<Transferencia> _transferenciasTerminadas = [];
@@ -293,9 +294,10 @@ class ProviderTransferencias extends ChangeNotifier {
             ifAbsent: () => productosEnTransferencia);
       }
       //producto recogido para entregar por usuario
+      //TODO: verificar lo del administrador
        if (estado == EstadoTransferencia.recogido &&
           dataCompleta &&
-          perteneceUsuario) {
+          (perteneceUsuario || currentUser?.userCargo == UserCargo.administrador  )) {
         final farmacia = _pharmaList.firstWhere(
             (f) => f.farmasName == farmaSolicita,
             orElse: () => Pharma()..farmasName = farmaSolicita);

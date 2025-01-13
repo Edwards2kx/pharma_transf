@@ -1,21 +1,21 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:pharma_transfer/controller/dio_instance.dart';
 import 'package:pharma_transfer/models/pharma_model.dart';
 import 'package:pharma_transfer/models/recibo_model.dart';
-import 'package:pharma_transfer/models/transferencia_model.dart';
 import 'package:pharma_transfer/models/user_model.dart';
 
+//GOOD
 Future<List<Pharma>> getPharmaFromServer() async {
-  var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
+  final dio = DioInstance.getDio();
 
-  final resp = await http.post(url, body: {
-    "accion": "farma",
-    "database": "admin_Smart",
-  });
+  final resp = await dio.get('', queryParameters: {"accion": "farma"});
+
   List<Pharma> pharmaList = [];
+
   try {
     if (resp.statusCode == 200) {
-      pharmaList = pharmaFromJson(resp.body);
+      pharmaList = pharmaFromJson(resp.data);
       debugPrint('getPharmaFromServer return ${pharmaList.length} elementos');
     } else {
       debugPrint('error en la comunicacion con el servidor');
@@ -27,38 +27,15 @@ Future<List<Pharma>> getPharmaFromServer() async {
   return pharmaList;
 }
 
-// @Deprecated('reemplazador por metodo [getActiveTransfByUser]')
-// Future<List<Transferencia>> getActiveTransferList() async {
-//   var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
-
-// //TODO: ESTO SE USARA PARA LAS TRANSFERENCIAS ACTIVAS O PARA ENTREGAR
-//   final resp = await http.post(url, body: {
-//     "accion": "getTransf",
-//     "database": "admin_Smart",
-//   });
-//   List<Transferencia> transfList = [];
-//   try {
-//     if (resp.statusCode == 200) {
-//       transfList = transferenciaFromJson(resp.body);
-//     } else {
-//       debugPrint('error en la comunicacion con el servidor');
-//       return [];
-//     }
-//   } catch (e) {
-//     debugPrint('error en getActiveTransferList $e');
-//   }
-//   return transfList;
-// }
-
+//GOOD
 Future<bool> pushTransferencia(Recibo recibo) async {
-  var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
+  final dio = DioInstance.getDio();
   int contadorSubidos = 0;
   int productosEnTransferencia = recibo.producto.length;
   for (var index = 0; index < productosEnTransferencia; index++) {
-    http.Response resp;
-    Object body = {
+    Response<dynamic> resp; //dio response
+    Map<String, dynamic> body = {
       "accion": "farmaGrabarTransferencia",
-      "database": "admin_Smart",
       "trans_date": DateTime.now().toString(),
       "trans_numero": recibo.numeroTransferencia,
       "trans_usr_solicita": recibo.usuSoliTransf,
@@ -73,19 +50,20 @@ Future<bool> pushTransferencia(Recibo recibo) async {
     debugPrint(body.toString());
 
     try {
-      resp = await http.post(url, body: body);
+      resp = await dio.get('', queryParameters: body);
     } catch (e) {
       debugPrint('error en pushTransferencia $e');
       return false;
     }
 
     if (resp.statusCode == 200) {
-      debugPrint('resultado de estatus = 200 ${resp.body}');
-      if (resp.body == "No Registrado") return false;
+      debugPrint('resultado de estatus = 200 ${resp.data}');
+      if (resp.data == "No Registrado") return false;
       contadorSubidos++;
     } else {
       debugPrint(
-          'error en la comunicacion con el servidor ${resp.body} ${resp.body.length}');
+        'error en la comunicacion con el servidor ${resp.data} ${resp.data.length}',
+      );
       return false;
     }
     debugPrint('productos contados como subidos = $contadorSubidos');
@@ -94,100 +72,23 @@ Future<bool> pushTransferencia(Recibo recibo) async {
   return true;
 }
 
-@Deprecated('pasado a la clase  TransfService')
-Future<bool> updateTransfRetiro(
-    Transferencia transferencia, String usuarioEmail) async {
-  final myUser = await getUserWithEmail(usuarioEmail);
-  if (myUser != null) {
-    if (myUser.usersEstado == '1') {
-      debugPrint('usuario valido');
-    } else {
-      return false;
-    }
-
-    var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
-    final resp = await http.post(url, body: {
-      "database": "admin_Smart",
-      "accion": "farmaUpdateRet",
-      "transId": transferencia.transfId,
-      "farmaUserRecoge": myUser.usersEmail,
-    });
-
-    try {
-      if (resp.statusCode == 200) {
-        debugPrint('resultado de estatus = 200 ${resp.body}');
-        if (resp.body == "No Registrado") return false;
-        return true;
-      } else {
-        debugPrint(
-            'error en la comunicacion con el servidor ${resp.body} ${resp.body.length}');
-        return false;
-      }
-    } catch (e) {
-      debugPrint('error en updateTransfRetiro $e');
-      return false;
-    }
-  }
-  return false;
-}
-
-@Deprecated('pasado a la clase  TransfService')
-Future<bool> updateTransfEntrega(
-    Transferencia transferencia, String usuarioEmail) async {
-  final myUser = await getUserWithEmail(usuarioEmail);
-  if (myUser != null) {
-    if (myUser.usersEstado == '1') {
-      debugPrint('usuario valido');
-    } else {
-      return false;
-    }
-
-    var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
-
-    debugPrint('voy a actualizar');
-
-    final resp = await http.post(url, body: {
-      "database": "admin_Smart",
-      "accion": "farmaUpdateEnt",
-      "transId": transferencia.transfId,
-      "farmaUserEntrega": myUser.usersEmail,
-    });
-
-    try {
-      if (resp.statusCode == 200) {
-        debugPrint('resultado de estatus = 200 ${resp.body}');
-        if (resp.body == "No Registrado") return false;
-        return true;
-      } else {
-        debugPrint(
-            'error en la comunicacion con el servidor ${resp.body} ${resp.body.length}');
-        return false;
-      }
-    } catch (e) {
-      debugPrint('error en updateTransfEntrega $e');
-      return false;
-    }
-  }
-  return false;
-}
-
+//GOOD
 Future<User?> getUserWithEmail(String email) async {
-  var url = Uri.parse('http://18.228.147.99/modulos/app_services.php');
-  final resp = await http.post(url, body: {
-    "accion": "getFarmaUser",
-    "database": "admin_Smart",
-    "farmaUserEmail": email
-  });
+  final dio = DioInstance.getDio();
+
+  final resp = await dio.get('',
+      queryParameters: {"accion": "getFarmaUser", "farmaUserEmail": email});
+
   try {
     if (resp.statusCode == 200) {
-      return userFromJson(resp.body).first;
+      return userFromJson(resp.data).first;
     } else {
       debugPrint('error en la comunicacion con el servidor');
       return null;
     }
   } catch (e) {
     debugPrint(
-        'error al pasear usuario desde el servidor, ${resp.body} error $e');
+        'error al pasear usuario desde el servidor, ${resp.data} error $e');
   }
   return null;
 }

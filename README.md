@@ -35,14 +35,6 @@ agregar al usuario de base de datos la información de cuenta de google
 en el login de 1 obtener el usuario de base de datos antes de navegar...
 
 
-modificar homePage para que ya le llegue el usuario.... este se carga desde la vista de login
-o tener un future que muestre cargando y cuando ya obtenga el usuario de google y el usuario de base de datos muestre la vista...
-
-cambiar las navegaciones a rutas usando go router y pasando los parametros...
-
-gemini api_key AIzaSyDIZJ0ZW4WoRxQt00twWLWhLFTALs0auMU
-
-
 los metodos del controller server_comunication.dart deben estar en una clase la cual debe ser accedida desde un provider no desde las vistas.
 
 
@@ -72,27 +64,6 @@ paquete.
 3. el rol de dependiente solo ve el historial de la farmacia a la que está relacionado
 
 
-
-AGREGAR VISTA DE UBICACIONES
-
-AGREGAR ACCION DE SUBIR UBICACION MOTORIZADO
-AGREGAR ACCION DE CONSULTAR UBICACION MOTORIZADO
-
- ya - AGREGAR VALIDACION DEL PERMISO DE UBICACION
-
- modificar drawer remover info innecesaria
- instalar shorebird
- agregar vista de mapas
-
-
- ubicacion 
- y acyualizacion farmacia
-
- probar endpoint de guardar ubicación, 
- probar endpoint de actualizar ubicación de farmacia
-
-
-
 lottie files
 borjalottie@yopmail.com
 RRdFd5dSk3XxaPB
@@ -111,5 +82,41 @@ cambiar el icono de la app
 
 flutter pub run flutter_launcher_icons
 
-
 al actualizar la ubicacion debo actualizar el nearPharma
+
+para subir una actualización en ShoreBird
+debe coincidir la versión del pubspec.yaml y la que está subida en la consola
+ -- shorebird patch android
+
+
+user_cargo
+
+administrador, motorizado y dependiente, franquiziado
+
+motorizado, solo ve lo que esta pendiente por recoger, y de entregar solo lo que no se ha recogido.
+
+el administrador debe ver todo, puede recoger y entregar cuando va a entregar un producto colocar un mensaje de que no tiene ese
+producto como recogido.
+
+dependiente (los que solicita) puede ver todas las transferencias que el genera, sin importar quien haya recogido, 
+no ve lo que le pidieron, no es de su interes. 
+en el historial solo ve lo que solicita, 
+
+otro campo que pone user_pertenece allí aparece a que usuario pertence cada usuario
+
+match entre rol depentiende, user_pertenece con la parma solicita, por recoger por entregar o ya en historial
+ve los 3 estados de la farmacia que solicito la farmacia del dependiente a que pertenece.
+
+mensaje de falla de internet.
+
+poner version de la aplicacion en el drawbar
+
+pendiente al filtro de la ubicacion de farmacia.
+
+
+
+
+para shorebird 
+shorebird release android --artifact apk
+
+flu

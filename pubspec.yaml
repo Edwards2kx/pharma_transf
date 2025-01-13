@@ -1,7 +1,7 @@
 name: pharma_transfer
 description: "Pharma Transf App"
 publish_to: 'none'
-version: 0.1.2
+version: 1.0.0+1
 
 environment:
   sdk: '>=3.2.1 <4.0.0'
@@ -14,28 +14,24 @@ dependencies:
   google_sign_in: ^6.2.1
   http: ^1.2.0
   loading_overlay: ^0.3.0
-  #path: ^1.8.3
-  #path_provider: ^2.1.2
   latlong2: 
   provider: 
   connectivity: 
-  # image_cropper:
   string_similarity: ^2.0.0
   image_picker:
   flutter_gemini: ^2.0.1
   either_dart: ^1.0.0
-  # flutter_riverpod: ^2.4.10
-  # riverpod_annotation: ^2.3.4
   geolocator: ^10.1.0
   custom_image_crop: ^0.0.13
   lottie: ^2.7.0
   loader_overlay: ^4.0.0
   flutter_map: ^6.1.0
-  # google_mlkit_text_recognition: ^0.11.0
   image: ^4.1.7
   collection: ^1.18.0
   intl: ^0.19.0
   flutter_dotenv: ^5.1.0
+  dio: ^5.7.0
+  flutter_pretty_dio_logger: ^3.0.0
 
   # firebase_ml_vision: ^0.11.0
 

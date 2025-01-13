@@ -42,8 +42,9 @@ class Transferencia {
   factory Transferencia.fromJson(Map<String, dynamic> json) {
     final transferencia = Transferencia(
       transfId: json["transf_id"],
-      transfDateSubida: DateTime.parse(json["transf_date_subida"]),
-      transfDateGenerado: DateTime.parse(json["transf_date_generado"]),
+      transfDateSubida: DateTime.parse(json["transf_date"]), //diferente
+      // transfDateSubida: DateTime.parse(json["transf_date_subida"]), //diferente
+      transfDateGenerado: DateTime.parse(json["transf_date_generado"]), //diferente
       transfNumero: json["transf_numero"],
       transfUsrSolicita: json["transf_usr_solicita"],
       transfFarmaSolicita: json["transf_farma_solicita"],

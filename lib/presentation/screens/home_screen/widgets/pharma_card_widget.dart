@@ -127,13 +127,20 @@ class _PharmaListWidgetState extends State<PharmaListWidget> {
     final farmacia = widget.pharmaInfo.farmacia;
     final transferencias = widget.transferencias;
     final tFiltradas = transferencias
-        .where((t) => (t.transfFarmaAcepta == farmacia.farmasName ||
-            (t.estado == EstadoTransferencia.recogido &&
-                t.transfFarmaSolicita == farmacia.farmasName)))
+        .where((t) =>
+            ((t.estado == EstadoTransferencia.recogido &&
+                t.transfFarmaSolicita == farmacia.farmasName)) ||
+            (t.estado == EstadoTransferencia.pendiente &&
+                t.transfFarmaAcepta == farmacia.farmasName))
         .toList();
+    // final tFiltradas = transferencias
+    //     .where((t) => (t.transfFarmaAcepta == farmacia.farmasName ||
+    //         (t.estado == EstadoTransferencia.recogido &&
+    //             t.transfFarmaSolicita == farmacia.farmasName)))
+    //     .toList();
 
     return Scaffold(
-      appBar: AppBar(),
+      // appBar: AppBar(),
       body: SizedBox(
         width: double.infinity,
         child: Column(
@@ -141,6 +148,17 @@ class _PharmaListWidgetState extends State<PharmaListWidget> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 56),
+            Row(
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Regresar'),
+                ),
+              ],
+            ),
             Text(farmacia.farmasName ?? '',
                 style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 16),
