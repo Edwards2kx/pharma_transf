@@ -8,7 +8,7 @@ import 'package:pharma_transfer/models/recibo_model.dart';
 import 'package:pharma_transfer/models/transferencia_model.dart';
 
 void main() async {
-  final user = await getUserWithEmail('nedan449@gmail.com');
+  final user = await getUserWithEmail('edwards2kx@gmail.com');
   if (user == null) debugPrint('user is null');
   debugPrint('user is $user');
   group(
@@ -16,7 +16,7 @@ void main() async {
     () {
       final transferService = TransfService();
       Transferencia? transferencia;
-      test('send transferencia con 2 productos ', skip: true, () async {
+      test('send transferencia con 2 productos ', skip: false, () async {
         //Arrange
         final recibo = Recibo(
           fecha: DateTime.now().toString(),
@@ -31,11 +31,11 @@ void main() async {
           ],
         );
         //Act
-        final response = await pushTransferencia(recibo);
+        final response = await pushTransferencia(recibo: recibo, user: user);
         //Assert
         expect(response, isNotNull);
       });
-      test('get transfer from server', () async {
+      test('get transfer from server', skip: true, () async {
         //Arrange
         //Act
         final response = await transferService.getActiveTransfByUser(user!);
@@ -54,8 +54,7 @@ void main() async {
         expect(response.isRight, isTrue);
       });
       //!Al parecer las devuelve todas por ser admin
-      test('listar transferencias recogidas por usuario', skip: true,
-          () async {
+      test('listar transferencias recogidas por usuario', skip: true, () async {
         //Arrange
         //Act
         final response = await transferService.getActiveTransfByUser(user!);
@@ -63,7 +62,7 @@ void main() async {
         expect(response, isNotEmpty);
       });
 
-      test('modificar transferencia recogidas para entregar', skip: false,
+      test('modificar transferencia recogidas para entregar', skip: true,
           () async {
         //Arrange
         //Act

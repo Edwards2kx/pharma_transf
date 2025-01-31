@@ -28,7 +28,8 @@ Future<List<Pharma>> getPharmaFromServer() async {
 }
 
 //GOOD
-Future<bool> pushTransferencia(Recibo recibo) async {
+Future<bool> pushTransferencia({required Recibo recibo, User? user}) async {
+// Future<bool> pushTransferencia(Recibo recibo) async {
   final dio = DioInstance.getDio();
   int contadorSubidos = 0;
   int productosEnTransferencia = recibo.producto.length;
@@ -45,7 +46,14 @@ Future<bool> pushTransferencia(Recibo recibo) async {
       "trans_producto": recibo.producto[index].nombre,
       "trans_cantidad_entera": recibo.producto[index].ent.toString(),
       "trans_cantidad_fraccion": recibo.producto[index].frac.toString(),
+      // "email": user?.usersEmail,
+      // "users_estado" : user?.usersEstado,
+      // "users_cargo" : user?.userCargo.toReadableString(),
+      // "users_pertenece" : user?.userPertenece,
+      // "users_dependencia" : user?.franquiciado
     };
+
+    body.addAll(user!.toModel());
 
     debugPrint(body.toString());
 

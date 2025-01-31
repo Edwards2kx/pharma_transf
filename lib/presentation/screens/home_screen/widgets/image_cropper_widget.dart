@@ -114,10 +114,10 @@ class ImageCropperWidgetState extends State<ImageCropperWidget> {
                   },
                   child: const Text(
                     'Continuar',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 14),
                   ),
                 ),
-                const SizedBox(width: 8),
+                // const SizedBox(width: 8),
               ],
             ),
           ),

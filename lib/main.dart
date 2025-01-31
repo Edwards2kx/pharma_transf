@@ -39,6 +39,7 @@ class MainApp extends StatelessWidget {
       overlayColor: Colors.black54,
       overlayWidgetBuilder: (_) => const LoadingOverlayWidget(),
       child: MaterialApp.router(
+        
         debugShowCheckedModeBanner: false,
         theme: AppTheme().getTheme(),
         routerConfig: appRouter,

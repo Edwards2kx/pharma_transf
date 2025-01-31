@@ -68,7 +68,8 @@ class ResultSheetWidget extends StatelessWidget {
                   alignment: Alignment.center,
                   child: FilledButton(
                     onPressed: () async {
-                      await _showConfirmation(context, response.right);
+                      await _showConfirmation(
+                          context, response.right, provider);
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
@@ -76,9 +77,7 @@ class ResultSheetWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 16,
-                )
+                const SizedBox(height: 16)
               ],
             );
           }
@@ -106,7 +105,8 @@ class ResultSheetWidget extends StatelessWidget {
   }
 }
 
-Future<void> _showConfirmation(BuildContext context, Recibo recibo) async {
+Future<void> _showConfirmation(BuildContext context, Recibo recibo,
+    ProviderTransferencias provider) async {
   await showDialog(
       context: context,
       builder: (_) {
@@ -124,14 +124,19 @@ Future<void> _showConfirmation(BuildContext context, Recibo recibo) async {
             FilledButton.tonal(
               child: const Text('Si'),
               onPressed: () async {
-                final response = await pushTransferencia(recibo);
+                final user = provider.currentUser;
+                final response = await pushTransferencia(
+                  recibo: recibo,
+                  user: user
+                  // userEmail: userEmail,
+                );
                 String message = '';
                 message = response
                     ? 'Registro exitoso'
                     : 'Se presento un error, intenta nuevamente';
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 ScaffoldMessenger.of(context)
-                    .showSnackBar(customSnackBar(context, message:message));
+                    .showSnackBar(customSnackBar(context, message: message));
                 context
                     .read<ProviderTransferencias>()
                     .fetchTransferenciasActivas();

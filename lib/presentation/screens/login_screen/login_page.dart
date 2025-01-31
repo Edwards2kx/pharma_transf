@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:pharma_transfer/controller/google_sign_in_services.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:pharma_transfer/presentation/providers/provider_transferencias.dart';
 import 'package:pharma_transfer/presentation/screens/home_screen/home_page.dart';
 import 'package:provider/provider.dart';
@@ -57,7 +57,8 @@ class _LoginPageState extends State<LoginPage> {
           image: DecorationImage(
               fit: BoxFit.cover,
               image: AssetImage('assets/background_pattern_pharma.jpg'),
-              colorFilter: ColorFilter.mode(Colors.blueAccent, BlendMode.modulate))),
+              colorFilter:
+                  ColorFilter.mode(Colors.blueAccent, BlendMode.modulate))),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -65,10 +66,10 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Text(
               'PharmaTransf',
-              style: Theme.of(context)
-                  .textTheme
-                  .displaySmall
-                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 0),
+              style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0),
             ),
             const SizedBox(height: 128),
             MaterialButton(
@@ -102,8 +103,10 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _checkConnectivityAndSignIn() async {
     final connectivity = Connectivity();
     var connectivityResult = await connectivity.checkConnectivity();
-    final isConnected = (connectivityResult == ConnectivityResult.wifi ||
-        connectivityResult == ConnectivityResult.mobile);
+    final isConnected = connectivityResult.contains(ConnectivityResult.wifi) ||
+        connectivityResult.contains(ConnectivityResult.mobile);
+    // final isConnected = (connectivityResult == ConnectivityResult.wifi ||
+    //     connectivityResult == ConnectivityResult.mobile);
 
     if (!isConnected) {
       ScaffoldMessenger.of(context).showSnackBar(snackBarErrorInternet);

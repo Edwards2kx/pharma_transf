@@ -20,14 +20,13 @@ class HistorialTansferenciasPageState extends State<HistorialTansferenciasPage>
   String searchString = '';
   // Set<int> filtroSeleccionado = {0};
   Filtro filtroSeleccionado = Filtro.dia;
-  TextEditingController searchBoxController = TextEditingController();
+  final searchBoxController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final provider =
         Provider.of<ProviderTransferencias>(context, listen: false);
-    final List<Transferencia> transferencias =
-        provider.getTransferenciasTerminadas;
+    final transferencias = provider.getTransferenciasTerminadas;
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
@@ -42,11 +41,14 @@ class HistorialTansferenciasPageState extends State<HistorialTansferenciasPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text('Transferencias terminadas',
-                style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.black87)),
+            const Text(
+              'Transferencias terminadas',
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w300,
+                color: Colors.black87,
+              ),
+            ),
             const SizedBox(height: 8.0),
             Container(
               // margin: const EdgeInsetsDirectional.all(16.0),

@@ -10,7 +10,7 @@ import 'package:pharma_transfer/presentation/screens/home_screen/widgets/image_c
 import 'package:pharma_transfer/presentation/screens/home_screen/widgets/result_sheet_widget.dart';
 import 'package:pharma_transfer/presentation/screens/login_screen/login_page.dart';
 import 'package:provider/provider.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';

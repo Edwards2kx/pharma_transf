@@ -25,7 +25,7 @@ void main() {
       usersNombre: '',
       usersEstado: '1',
       userCargo: UserCargo.dependiente,
-      dependencia: 'ECO QUITO ALMA LOJANA');
+      userPertenece: 'ECO QUITO ALMA LOJANA');
 
   test('obtener transferencias como administrador o motorizado, success',
       () async {
@@ -53,7 +53,7 @@ void main() {
       () async {
     final service = TransfService();
     final activeTransf =
-        await service.getActiveTransfByUser(usuarioDependiente.copyWith(dependencia: ''));
+        await service.getActiveTransfByUser(usuarioDependiente.copyWith(userPertenece: ''));
 
     print('se obtuvieron ${activeTransf.length} transferencias activas');
 
