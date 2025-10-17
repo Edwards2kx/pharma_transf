@@ -6,21 +6,30 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('Recibo constructor from map', () async {
     Gemini.init(
-      apiKey: 'AIzaSyD6hiA3ecFA12nPGAJgZln-yvR_bvVZhMw',
+      apiKey: 'AIzaSyBItVB5kwF6ESv2CMtUV2MRwr2sJ679WxE',
       enableDebugging: true,
       generationConfig: GenerationConfig(temperature: 0.5),
-      baseURL: 'https://language.googleapis.com/v1/projects/<project-id>/locations/<location>/models/gemini-pro:generateContent'
+      // baseURL: 'https://language.googleapis.com/v1/projects/<project-id>/locations/<location>/models/gemini-pro:generateContent'
     );
     //Arrange
     final gemini = Gemini.instance;
-    final info = await gemini.info(model: 'gemini-pro-vision');
-    print(info);
 
-    final geminiResponse = await gemini.text('año de la segunda guerra mundial', modelName: 'gemini-pro-vision');
-    print(geminiResponse);
+    final geminiModels = await gemini.listModels();
+
+    print(geminiModels);
+
+    gemini
+        .listModels()
+        .then((models) => print(models))
+
+        /// list
+        .catchError((e) => print('listModels: error: $e'));
+    // final info = await gemini.info(model: 'gemini-pro-vision');
+    // print(info);
+
+    // final geminiResponse = await gemini.text('año de la segunda guerra mundial', modelName: 'gemini-pro-vision');
+    // print(geminiResponse);
   });
-
-
 }
 
 

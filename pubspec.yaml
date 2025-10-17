@@ -16,10 +16,10 @@ dependencies:
   loading_overlay: ^0.3.0
   latlong2: 
   provider: 
-  connectivity_plus: ^6.1.1
+  connectivity_plus: ^6.1.5
   string_similarity: ^2.0.0
   image_picker:
-  flutter_gemini: ^2.0.1
+  flutter_gemini: ^3.0.0
   either_dart: ^1.0.0
   geolocator: ^10.1.0
   # custom_image_crop: ^0.0.13

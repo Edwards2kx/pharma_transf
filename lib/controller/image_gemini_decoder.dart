@@ -18,10 +18,26 @@ class ImageGeminiDecoder {
       return const Left('No seleccionaste ninguna imagen');
     }
     final gemini = Gemini.instance;
-    final geminiResponse = await gemini
-        .textAndImage(text: kPythonPromptDecodeTicket, images: [imageBytes]);
+    // final geminiResponse = await gemini
+    //     .textAndImage(text: kPythonPromptDecodeTicket, images: [imageBytes]);
 
-    final response = geminiResponse?.content?.parts?.first.text;
+    Candidates? geminiResponse;
+
+    try {
+      geminiResponse = await gemini.prompt(
+        parts: [
+          Part.text(kPythonPromptDecodeTicket),
+          Part.bytes(imageBytes),
+        ],
+      );
+    } catch (e) {
+      debugPrint('error en ImageGeminiDecoder $e');
+      return Left(e.toString());
+    }
+
+//TODO: implementar try catch
+    final response = geminiResponse?.content?.parts?.first.toString();
+    // final response = geminiResponse?.content?.parts?.first.text;
     debugPrint('raw response from gemini server $response');
     if (response == null) {
       return const Left('Se presentó un fallo, intenta nueamente');
@@ -38,7 +54,6 @@ class ImageGeminiDecoder {
       final recibo = Recibo.fromMap(json['body']);
       if (!kUsePharmaNameValidator) return Right(recibo);
 
-
       final pharmaList = await getPharmaFromServer();
       final pharmaListNames = pharmaList.map((e) => e.farmasName).toList();
       final farAutoBestStringComparative =
@@ -52,7 +67,6 @@ class ImageGeminiDecoder {
               pharmaListNames[farSoliBestStringComparative.bestMatchIndex]);
       debugPrint(reciboValidated.toString());
 
-      
       return Right(reciboValidated);
       // return kUsePharmaNameValidator ? Right(reciboValidated) : Right(reciboValidated) ;
     }
