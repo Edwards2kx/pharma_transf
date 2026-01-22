@@ -119,4 +119,13 @@ pendiente al filtro de la ubicacion de farmacia.
 para shorebird 
 shorebird release android --artifact apk
 
-flu
+la de la izquierda para filtrar, selecciona varias farmacias y ya luego en la 
+
+
+filtrar por la farmacia origen, quien pidio el pedido
+
+en la pantalla principal al entrar al detalle de una farmacia no debe devolverse cada vez que toma un detalle....
+
+reparar la vista del lado derecho de historial falla el filtrado de dia
+y muestra elementos anteriores.
+

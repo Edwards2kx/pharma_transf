@@ -20,7 +20,6 @@ class ProviderTransferencias extends ChangeNotifier {
   final UserLocationService _locationService = UserLocationService();
   final TransfService transfService = TransfService();
 
-
   List<Pharma> _pharmaList = [];
   List<Transferencia> _transferenciasActivas = [];
   List<Transferencia> _transferenciasTerminadas = [];
@@ -91,6 +90,7 @@ class ProviderTransferencias extends ChangeNotifier {
   Future<void> _initialLoad() async {
     if (isLoading) return;
     isLoading == true;
+    //TODO: hacer un fetch simultaneo despues de obtener el usuario
     await getCurrentUser();
     await getPharmaList();
     await fetchTransferenciasActivas(); //aqui obtengo la ubicacion
@@ -271,7 +271,7 @@ class ProviderTransferencias extends ChangeNotifier {
       //         perteneceUsuario) ||
       //     (estado == EstadoTransferencia.pendiente && dataCompleta)) {
 
-      //producto nuevo para recoger en esta farmacia 
+      //producto nuevo para recoger en esta farmacia
       if (estado == EstadoTransferencia.pendiente && dataCompleta) {
         final farmacia = _pharmaList.firstWhere(
             (f) => f.farmasName == farmaAcepta,
@@ -282,8 +282,8 @@ class ProviderTransferencias extends ChangeNotifier {
             farmacia.farmasName!, (value) => value + 1,
             ifAbsent: () => productosEnTransferencia);
       }
-      //producto sin recoger a llevar a esta farmacia 
-       if (estado == EstadoTransferencia.pendiente && dataCompleta) {
+      //producto sin recoger a llevar a esta farmacia
+      if (estado == EstadoTransferencia.pendiente && dataCompleta) {
         final farmacia = _pharmaList.firstWhere(
             (f) => f.farmasName == farmaSolicita,
             orElse: () => Pharma()..farmasName = farmaSolicita);
@@ -295,9 +295,10 @@ class ProviderTransferencias extends ChangeNotifier {
       }
       //producto recogido para entregar por usuario
       //TODO: verificar lo del administrador
-       if (estado == EstadoTransferencia.recogido &&
+      if (estado == EstadoTransferencia.recogido &&
           dataCompleta &&
-          (perteneceUsuario || currentUser?.userCargo == UserCargo.administrador  )) {
+          (perteneceUsuario ||
+              currentUser?.userCargo == UserCargo.administrador)) {
         final farmacia = _pharmaList.firstWhere(
             (f) => f.farmasName == farmaSolicita,
             orElse: () => Pharma()..farmasName = farmaSolicita);
@@ -323,14 +324,14 @@ class ProviderTransferencias extends ChangeNotifier {
             distancia: distancia,
             prodRecoger: cantProdRecogerFarmacia[f.farmasName] ?? 0,
             prodRecogidoUsuario: cantProdEntregarUsuario[f.farmasName] ?? 0,
-            prodEntregar: cantProdEntregarFarmacia[f.farmasName]?? 0),
+            prodEntregar: cantProdEntregarFarmacia[f.farmasName] ?? 0),
       );
     }
     // return farmasParaEntregar;
     return farmasInfo;
   }
 
-@Deprecated('reemplazado por _getFarmaciasConEventos')
+  @Deprecated('reemplazado por _getFarmaciasConEventos')
   Set<PharmaInfo> _getFarmaciasParaRecoger() {
     Set<Pharma> farmasParaRecoger = {};
     Map<String, int> productosPorFarmacia = {};

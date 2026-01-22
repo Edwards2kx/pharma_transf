@@ -53,10 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC9AmoXC7B3BFmBR7IwI7fIn7-sfom8LF4',
-    appId: '1:452611067008:android:33556c64edd13662086a65',
-    messagingSenderId: '452611067008',
-    projectId: 'pharma-transf',
-    storageBucket: 'pharma-transf.appspot.com',
+    apiKey: 'AIzaSyCCCnd-ujRjQn7tgcyoILnWlZV81MIZxCo',
+    appId: '1:47710456414:android:2fa7a48c190804d69502cf',
+    messagingSenderId: '47710456414',
+    projectId: 'farmatransf-b127f',
+    storageBucket: 'farmatransf-b127f.firebasestorage.app',
   );
+
 }
