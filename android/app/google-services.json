@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "452611067008",
-    "project_id": "pharma-transf",
-    "storage_bucket": "pharma-transf.appspot.com"
+    "project_number": "47710456414",
+    "project_id": "farmatransf-b127f",
+    "storage_bucket": "farmatransf-b127f.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:452611067008:android:33556c64edd13662086a65",
+        "mobilesdk_app_id": "1:47710456414:android:2fa7a48c190804d69502cf",
         "android_client_info": {
           "package_name": "com.smartneighbor.pharmatransf"
         }
       },
       "oauth_client": [
         {
-          "client_id": "452611067008-4ah134ohped37esafc675coluf2floi8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.smartneighbor.pharmatransf",
-            "certificate_hash": "18c5c19e5802cc7931a8816f81f0464320617b7c"
-          }
-        },
-        {
-          "client_id": "452611067008-g0gnguj16tbpc4rn6brnsnfaa96ijcue.apps.googleusercontent.com",
+          "client_id": "47710456414-c222nbhod52o4nvekrlicdm47avq3gig.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC9AmoXC7B3BFmBR7IwI7fIn7-sfom8LF4"
+          "current_key": "AIzaSyCCCnd-ujRjQn7tgcyoILnWlZV81MIZxCo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "452611067008-g0gnguj16tbpc4rn6brnsnfaa96ijcue.apps.googleusercontent.com",
+              "client_id": "47710456414-c222nbhod52o4nvekrlicdm47avq3gig.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
